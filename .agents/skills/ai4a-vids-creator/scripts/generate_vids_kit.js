@@ -1,0 +1,340 @@
+const fs = require('fs');
+const path = require('path');
+
+// CLI Arguments: node generate_vids_kit.js --topic "..." --duration 60s --output-dir "..."
+const args = process.argv.slice(2);
+let topic = "Chiến Dịch Tái Ký Retie-up & Kích Hoạt 3.194 Quán Quen Kênh On-Premise";
+let duration = "60s";
+let outputDir = process.cwd();
+
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === '--topic' && args[i+1]) topic = args[i+1];
+  if (args[i] === '--duration' && args[i+1]) duration = args[i+1];
+  if (args[i] === '--output-dir' && args[i+1]) outputDir = path.resolve(args[i+1]);
+}
+
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir, { recursive: true });
+}
+
+console.log(`Generating Google Vids Production Kit for: "${topic}" (${duration})...`);
+
+const scenes = [
+  {
+    id: 1,
+    name: "Opening Hook",
+    time: "00:00 - 00:06",
+    durationSec: 6,
+    visual: "Cinematic drone shot của dãy phố ẩm thực sầm uất về đêm với ánh đèn vàng rực rỡ, logo Heineken/Tiger nổi bật.",
+    onScreenText: "CHIẾN DỊCH TÁI KÝ RETIE-UP 2026",
+    voiceover: "Chào các chiến binh Sales Rep! Tháng 9 này, cơ hội bùng nổ doanh số kênh On-Premise chính thức mở màn!",
+    bgm: "Upbeat energetic corporate intro"
+  },
+  {
+    id: 2,
+    name: "Thách Thức & Điểm Nghẽn",
+    time: "00:06 - 00:16",
+    durationSec: 10,
+    visual: "Hình ảnh Dashboard phân tích dữ liệu chỉ số đỏ: 3.194 điểm bán đang dừng phát sinh đơn hàng, tồn kho đại lý tăng cao.",
+    onScreenText: "3.194 QUÁN QUEN CHƯA LÊN ĐƠN BIA",
+    voiceover: "Hơn 3.100 quán quen đang chờ chúng ta tái kích hoạt. Mỗi ngày chậm trễ là một ngày đối thủ tiến gần hơn!",
+    bgm: "Focused, dramatic suspense"
+  },
+  {
+    id: 3,
+    name: "Gói Đòn Bẩy OSR Retie-up",
+    time: "00:16 - 00:30",
+    durationSec: 14,
+    visual: "Sales Rep chuyên nghiệp cầm tài liệu OSR gặp gỡ chủ quán, bắt tay thân thiện kèm hình ảnh biển hiệu hộp đèn và dù bạt mới.",
+    onScreenText: "GÓI TÀI TRỢ OSR & THƯỞNG SẢN LƯỢNG MỚI",
+    voiceover: "Vũ khí mới đã sẵn sàng: Bộ hồ sơ OSR 1-chạm, gói tài trợ linh hoạt chiết khấu trực tiếp theo thùng và tài trợ full POSM VIP.",
+    bgm: "Inspiring acoustic rhythm"
+  },
+  {
+    id: 4,
+    name: "Chỉ Số Đột Phá Mục Tiêu",
+    time: "00:30 - 00:44",
+    durationSec: 14,
+    visual: "Thẻ chỉ số to bản phát sáng: Hoàn thành 100% Target Sell-In 375k thùng và giải phóng tồn kho SCD về mức an toàn.",
+    onScreenText: "MỤC TIÊU: 100% TARGET 375K THÙNG",
+    voiceover: "Khóa chặt sản lượng Sell-Out, đưa toàn bộ SubD South 2 và South 9 cán đích ngoạn mục trước tuần cuối tháng!",
+    bgm: "High energy buildup"
+  },
+  {
+    id: 5,
+    name: "Kế Hoạch Tác Chiến Tuyến",
+    time: "00:44 - 00:54",
+    durationSec: 10,
+    visual: "Lịch trình đi tuyến bản đồ số: Mỗi Sales Rep viếng thăm 5 quán mỗi ngày, gửi ảnh thẻ Zalo 30s chốt số ngay tại điểm bán.",
+    onScreenText: "ĐI TUYẾN THỰC ĐỊA - CHỐT SỐ TẠI CHỖ",
+    voiceover: "Hành động ngay hôm nay: Rà soát danh sách điểm bán trên App, tiếp cận chủ quán và chốt ký thỏa thuận OSR trong tuần này!",
+    bgm: "Fast-paced driving beat"
+  },
+  {
+    id: 6,
+    name: "Lời Kêu Gọi Về Đích (CTA)",
+    time: "00:54 - 01:00",
+    durationSec: 6,
+    visual: "Tập thể đội ngũ kinh doanh giơ cao ly bia Tiger/Heineken ăn mừng chiến thắng cùng thông điệp quyết tâm.",
+    onScreenText: "VỮNG BƯỚC TIÊN PHONG - CHINH PHỤC ĐỈNH CAO",
+    voiceover: "Cùng nhau, chúng ta sẽ tạo nên kỷ lục doanh số mới! Lên đường thôi các chiến binh!",
+    bgm: "Triumphant orchestral finale"
+  }
+];
+
+// 1. Generate Master Prompt for Google Vids AI
+const masterPrompt = `Create a high-impact, professional 60-second corporate presentation video in 16:9 widescreen format about "${topic}" designed specifically for Heineken & Tiger Commercial Sales Teams.
+
+Goal: Motivate and guide sales representatives to execute outlet retie-up negotiations and reactivate 3,194 inactive outlets using the new OSR workflow.
+Tone of Voice: Inspiring, energetic, confident, and highly action-oriented.
+Visual Theme: Premium corporate look with Heineken green (#008200), Tiger blue (#0055B8), crisp gold accents, clean bold typography, and smooth cinematic transitions.
+Audio: Clear, passionate Vietnamese AI voiceover with an upbeat, driving corporate acoustic background music track.
+
+Please structure the video into the following 6 sequential scenes:
+
+${scenes.map(s => `Scene ${s.id} - ${s.name} (${s.time}):
+- Visual Direction: ${s.visual}
+- On-Screen Text: "${s.onScreenText}"
+- AI Voiceover Script: "${s.voiceover}"
+- Background Music: ${s.bgm}
+`).join('\n')}
+`;
+
+fs.writeFileSync(path.join(outputDir, 'google_vids_prompt.txt'), masterPrompt, 'utf8');
+
+// 2. Generate Markdown Storyboard
+const storyboardMd = `# BẢNG PHÂN CẢNH VIDEO GOOGLE VIDS (STORYBOARD)
+## Chủ đề: ${topic}
+* **Thời lượng:** ${duration} (6 phân cảnh chuẩn 16:9)
+* **Kênh sử dụng:** Google Workspace Vids / Trình chiếu họp giao ban & gửi Zalo tác chiến
+* **Tác giả:** ai4a-vids-creator (AI4A)
+
+---
+
+## Danh Sách Phân Cảnh Chi Tiết
+
+| Phân Cảnh | Timecode | Loại Cảnh | Chỉ Dẫn Khung Hình (Visual Direction) | Chữ Trên Màn Hình | Lời Thoại Thuyết Minh (Voiceover) |
+|:---:|:---:|:---|:---|:---|:---|
+${scenes.map(s => `| **Scene ${s.id}** | \`${s.time}\` | ${s.name} | ${s.visual} | **${s.onScreenText}** | *"${s.voiceover}"* |`).join('\n')}
+
+---
+
+## Hướng Dẫn Nạp Vào Google Vids (30 Giây)
+1. Mở trang [Google Vids](https://workspace.google.com/products/vids/).
+2. Nhấp vào ô **"Help me create a video with prompt"**.
+3. Mở file \`google_vids_prompt.txt\` vừa tạo, sao chép toàn bộ và dán vào ô prompt.
+4. Bấm **Generate** để Google Vids AI tự động ráp nối stock video, giọng đọc AI và nhạc nền!
+`;
+
+fs.writeFileSync(path.join(outputDir, 'video_storyboard.md'), storyboardMd, 'utf8');
+
+// 3. Generate Interactive Video Preview HTML
+const previewHtml = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Vids Interactive Storyboard Preview | AI4A</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #090d16;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .player-wrap {
+      width: 100%;
+      max-width: 960px;
+      background: #111827;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7);
+    }
+    .screen-canvas {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(135deg, #022c22 0%, #0f172a 100%);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px;
+      border-bottom: 2px solid #008200;
+      overflow: hidden;
+    }
+    .badge-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 130, 0, 0.3);
+      color: #34d399;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      align-self: flex-start;
+      border: 1px solid rgba(52, 211, 153, 0.4);
+    }
+    .center-content {
+      text-align: center;
+      margin: auto 0;
+    }
+    .on-screen-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+      text-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      margin-bottom: 14px;
+    }
+    .visual-cue-box {
+      font-size: 13px;
+      color: #94a3b8;
+      background: rgba(0,0,0,0.4);
+      border: 1px dashed rgba(255,255,255,0.2);
+      padding: 8px 16px;
+      border-radius: 6px;
+      display: inline-block;
+      max-width: 700px;
+    }
+    .subtitle-bar {
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #fef08a;
+      line-height: 1.5;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .controls-panel {
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #0f172a;
+    }
+    .btn {
+      background: #008200;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: #059669; }
+    .btn-secondary { background: rgba(255,255,255,0.1); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+    .timeline-indicator {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="player-wrap">
+    <div class="screen-canvas" id="canvas">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="badge-top" id="sceneBadge">SCENE 1 / 6 • OPENING HOOK</span>
+        <span style="font-family: 'JetBrains Mono'; font-size: 12px; color: #94a3b8;" id="timeCode">00:00 - 00:06</span>
+      </div>
+
+      <div class="center-content">
+        <h1 class="on-screen-title" id="screenTitle">CHIẾN DỊCH TÁI KÝ RETIE-UP 2026</h1>
+        <div class="visual-cue-box" id="visualCue">
+          🎬 Visual: Cinematic drone shot của dãy phố ẩm thực sầm uất về đêm...
+        </div>
+      </div>
+
+      <div class="subtitle-bar" id="voiceoverSub">
+        🎙️ "Chào các chiến binh Sales Rep! Tháng 9 này, cơ hội bùng nổ doanh số kênh On-Premise chính thức mở màn!"
+      </div>
+    </div>
+
+    <div class="controls-panel">
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-secondary" id="prevBtn">◀ Trước</button>
+        <button class="btn" id="playBtn">▶ Tự Động Chạy</button>
+        <button class="btn btn-secondary" id="nextBtn">Tiếp ▶</button>
+      </div>
+
+      <span class="timeline-indicator" id="progressText">Phân cảnh: 1 / 6 (Tổng 60 giây)</span>
+
+      <button class="btn" onclick="navigator.clipboard.writeText(promptContent).then(()=>alert('Đã sao chép Master Prompt Google Vids!'))">
+        📋 Copy Prompt Vids
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const scenes = ${JSON.stringify(scenes)};
+    const promptContent = \`${masterPrompt.replace(/`/g, '\\`')}\`;
+    let currentIdx = 0;
+    let isPlaying = false;
+    let timer = null;
+
+    function renderScene(idx) {
+      currentIdx = idx;
+      const s = scenes[currentIdx];
+      document.getElementById('sceneBadge').textContent = \`SCENE \${s.id} / \${scenes.length} • \${s.name.toUpperCase()}\`;
+      document.getElementById('timeCode').textContent = s.time;
+      document.getElementById('screenTitle').textContent = s.onScreenText;
+      document.getElementById('visualCue').textContent = \`🎬 Visual Cue: \${s.visual}\`;
+      document.getElementById('voiceoverSub').textContent = \`🎙️ Voiceover: "\${s.voiceover}"\`;
+      document.getElementById('progressText').textContent = \`Phân cảnh: \${currentIdx + 1} / \${scenes.length} (\${s.time})\`;
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      renderScene((currentIdx + 1) % scenes.length);
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      renderScene((currentIdx - 1 + scenes.length) % scenes.length);
+    });
+
+    document.getElementById('playBtn').addEventListener('click', () => {
+      if (isPlaying) {
+        clearInterval(timer);
+        isPlaying = false;
+        document.getElementById('playBtn').textContent = '▶ Tự Động Chạy';
+      } else {
+        isPlaying = true;
+        document.getElementById('playBtn').textContent = '⏸ Tạm Dừng';
+        timer = setInterval(() => {
+          renderScene((currentIdx + 1) % scenes.length);
+        }, 5000);
+      }
+    });
+
+    renderScene(0);
+  </script>
+</body>
+</html>
+`;
+
+fs.writeFileSync(path.join(outputDir, 'video_preview.html'), previewHtml, 'utf8');
+
+console.log('Production kit generated successfully:');
+console.log('1. google_vids_prompt.txt (Paste into Google Vids)');
+console.log('2. video_storyboard.md (Detailed scene specs)');
+console.log('3. video_preview.html (Interactive browser player preview)');

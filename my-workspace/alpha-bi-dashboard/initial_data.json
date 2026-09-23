@@ -1,0 +1,285 @@
+{
+  "success": true,
+  "source_file": "DEMO_sales_data.xlsx",
+  "mtime": 1789910574.446406,
+  "timestamp": "21:04:41 - 20/09/2026",
+  "kpi": {
+    "dt": {
+      "raw": 296232775547.0,
+      "billion": 296.23,
+      "label": "Tổng Doanh Thu (DT)",
+      "growth": "+15.8%",
+      "sparkline": [
+        0.17,
+        0.66,
+        0.94,
+        1.48,
+        1.58,
+        2.65,
+        0.91,
+        2.14,
+        1.06,
+        1.31,
+        1.08,
+        1.87,
+        3.16,
+        3.78,
+        1.93,
+        1.75
+      ],
+      "target_pct": 104.2
+    },
+    "cp": {
+      "raw": 163820523881.0,
+      "billion": 163.82,
+      "label": "Tổng Chi Phí (CP)",
+      "ratio_dt": 55.3,
+      "sparkline": [
+        0.09,
+        0.38,
+        0.56,
+        0.64,
+        0.92,
+        1.33,
+        0.4,
+        1.05,
+        0.56,
+        0.71,
+        0.46,
+        1.03,
+        1.9,
+        2.0,
+        0.94,
+        0.85
+      ],
+      "status": "safe"
+    },
+    "ln": {
+      "raw": 132412251668.0,
+      "billion": 132.41,
+      "label": "Lợi Nhuận Thuần",
+      "margin": 44.7,
+      "sparkline": [
+        0.07,
+        0.28,
+        0.38,
+        0.85,
+        0.66,
+        1.32,
+        0.51,
+        1.08,
+        0.5,
+        0.6,
+        0.62,
+        0.84,
+        1.27,
+        1.78,
+        0.99,
+        0.9
+      ],
+      "growth": "+22.4%"
+    },
+    "orders": {
+      "raw": 500,
+      "label": "Tổng Đơn Hàng",
+      "aov_million": 592.5,
+      "sparkline": [
+        1,
+        2,
+        2,
+        2,
+        3,
+        4,
+        2,
+        3,
+        2,
+        2,
+        1,
+        3,
+        5,
+        6,
+        4,
+        3
+      ],
+      "growth": "+8.5%"
+    }
+  },
+  "charts": {
+    "categories": {
+      "names": [
+        "Thuc Pham",
+        "Thoi Trang",
+        "Dien Tu",
+        "Gia Dung"
+      ],
+      "dt": [
+        85.57,
+        72.58,
+        72.29,
+        65.79
+      ],
+      "cp": [
+        47.67,
+        40.15,
+        39.19,
+        36.81
+      ],
+      "ln": [
+        37.9,
+        32.43,
+        33.1,
+        28.98
+      ]
+    },
+    "donut_category": {
+      "labels": [
+        "Thuc Pham",
+        "Thoi Trang",
+        "Dien Tu",
+        "Gia Dung"
+      ],
+      "series": [
+        85.57,
+        72.58,
+        72.29,
+        65.79
+      ]
+    },
+    "monthly_trend": {
+      "months": [
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06"
+      ],
+      "dt": [
+        54.14,
+        34.61,
+        45.04,
+        44.83,
+        63.21,
+        54.4
+      ],
+      "cp": [
+        30.19,
+        18.49,
+        25.37,
+        25.06,
+        35.36,
+        29.36
+      ],
+      "ln": [
+        23.96,
+        16.13,
+        19.66,
+        19.78,
+        27.85,
+        25.04
+      ]
+    }
+  },
+  "top_products": [
+    {
+      "code": "SP132",
+      "name": "San Pham Gia Dung 4",
+      "cat": "Gia Dung",
+      "qty": 96.0,
+      "dt": 3522617206.0,
+      "cp": 1913144984.0,
+      "ln": 1609472222.0,
+      "margin": 45.7
+    },
+    {
+      "code": "SP108",
+      "name": "San Pham Thuc Pham 10",
+      "cat": "Thuc Pham",
+      "qty": 88.0,
+      "dt": 3223672701.0,
+      "cp": 2087816901.0,
+      "ln": 1135855800.0,
+      "margin": 35.2
+    },
+    {
+      "code": "SP412",
+      "name": "San Pham Thuc Pham 4",
+      "cat": "Thuc Pham",
+      "qty": 78.0,
+      "dt": 3101217183.0,
+      "cp": 1525707625.0,
+      "ln": 1575509557.0,
+      "margin": 50.8
+    },
+    {
+      "code": "SP989",
+      "name": "San Pham Thuc Pham 9",
+      "cat": "Thuc Pham",
+      "qty": 88.0,
+      "dt": 3073629154.0,
+      "cp": 1660536844.0,
+      "ln": 1413092311.0,
+      "margin": 46.0
+    },
+    {
+      "code": "SP476",
+      "name": "San Pham Thuc Pham 5",
+      "cat": "Thuc Pham",
+      "qty": 91.0,
+      "dt": 2975661442.0,
+      "cp": 1810399954.0,
+      "ln": 1165261488.0,
+      "margin": 39.2
+    },
+    {
+      "code": "SP572",
+      "name": "San Pham Gia Dung 10",
+      "cat": "Gia Dung",
+      "qty": 104.0,
+      "dt": 2859905516.0,
+      "cp": 1527111172.0,
+      "ln": 1332794345.0,
+      "margin": 46.6
+    },
+    {
+      "code": "SP620",
+      "name": "San Pham Thuc Pham 3",
+      "cat": "Thuc Pham",
+      "qty": 83.0,
+      "dt": 2809970506.0,
+      "cp": 1619619335.0,
+      "ln": 1190351171.0,
+      "margin": 42.4
+    },
+    {
+      "code": "SP854",
+      "name": "San Pham Thoi Trang 4",
+      "cat": "Thoi Trang",
+      "qty": 103.0,
+      "dt": 2641398721.0,
+      "cp": 1663779700.0,
+      "ln": 977619021.0,
+      "margin": 37.0
+    },
+    {
+      "code": "SP811",
+      "name": "San Pham Thoi Trang 5",
+      "cat": "Thoi Trang",
+      "qty": 68.0,
+      "dt": 2588704280.0,
+      "cp": 1363675993.0,
+      "ln": 1225028287.0,
+      "margin": 47.3
+    },
+    {
+      "code": "SP472",
+      "name": "San Pham Thoi Trang 2",
+      "cat": "Thoi Trang",
+      "qty": 97.0,
+      "dt": 2431443368.0,
+      "cp": 1480823215.0,
+      "ln": 950620155.0,
+      "margin": 39.1
+    }
+  ]
+}

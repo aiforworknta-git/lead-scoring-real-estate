@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kiến Trúc Dashboard Lớn & Điều Phối Multi-Agent Trên Google Drive | AI4A Executive Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --bg-card-dark: #111827;
+      --bg-card-border: #1f2937;
+      --text-main-dark: #f9fafb;
+      --text-muted-dark: #9ca3af;
+      
+      --bg-light: #f8fafc;
+      --bg-card-light: #ffffff;
+      --border-light: #e2e8f0;
+      --text-main-light: #0f172a;
+      --text-muted-light: #64748b;
+      
+      --accent-green: #059669;
+      --accent-green-deep: #008200;
+      --accent-green-soft: rgba(5, 150, 105, 0.12);
+      
+      --accent-blue: #0284c7;
+      --accent-blue-soft: rgba(2, 132, 199, 0.12);
+      
+      --accent-amber: #d97706;
+      --accent-amber-soft: rgba(217, 119, 6, 0.12);
+      
+      --accent-red: #dc2626;
+      --accent-red-soft: rgba(220, 38, 38, 0.12);
+      
+      --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: #030712;
+      color: var(--text-main-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* Top Control Bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+    }
+
+    .brand-tag {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-badge {
+      background: rgba(5, 150, 105, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(5, 150, 105, 0.4);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .controls-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-ctrl {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f3f4f6;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      font-family: var(--font-main);
+    }
+
+    .btn-ctrl:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .btn-ctrl.active {
+      background: #0284c7;
+      border-color: #38bdf8;
+      color: #fff;
+    }
+
+    .slide-counter {
+      font-size: 13px;
+      font-weight: 700;
+      color: #94a3b8;
+      padding: 0 8px;
+      font-family: var(--font-mono);
+    }
+
+    /* Presentation Container (16:9 Aspect Ratio) */
+    .viewport-wrapper {
+      width: 100vw;
+      height: calc(100vh - 52px);
+      margin-top: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .deck-frame {
+      width: 100%;
+      max-width: 1280px;
+      aspect-ratio: 16 / 9;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Slide General Styles */
+    .slide-page {
+      position: absolute;
+      inset: 0;
+      padding: 44px 56px 40px 56px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: translateX(20px);
+      background: var(--bg-light);
+      color: var(--text-main-light);
+    }
+
+    .slide-page.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .slide-page.slide-dark {
+      background: #0b1120;
+      color: #f8fafc;
+    }
+
+    /* Slide Header Standards */
+    .slide-meta-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--border-light);
+      padding-bottom: 16px;
+    }
+
+    .slide-dark .slide-meta-header {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .category-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slide-dark .category-title {
+      color: #34d399;
+    }
+
+    .action-title {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.35;
+      color: #0f172a;
+      letter-spacing: -0.3px;
+    }
+
+    .slide-dark .action-title {
+      color: #f8fafc;
+    }
+
+    /* Slide Content Body */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    /* Grid Layouts */
+    .grid-3-col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      height: 100%;
+    }
+
+    .grid-2-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      height: 100%;
+    }
+
+    .grid-4-col {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      height: 100%;
+    }
+
+    /* Cards */
+    .exec-card {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 22px 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .exec-card.card-accent-top::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: var(--card-accent, var(--accent-blue));
+    }
+
+    .exec-card.card-dark {
+      background: #151d30;
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #f1f5f9;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--card-accent, var(--accent-blue));
+      margin-bottom: 8px;
+    }
+
+    .card-heading {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.35;
+      margin-bottom: 14px;
+    }
+
+    .card-dark .card-heading {
+      color: #f8fafc;
+    }
+
+    .card-bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    .card-dark .card-bullet-list {
+      color: #94a3b8;
+    }
+
+    .card-bullet-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .card-bullet-list li::before {
+      content: '•';
+      color: var(--card-accent, var(--accent-blue));
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    /* Warning Cards */
+    .warning-card {
+      background: #fff5f5;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .warning-badge-header {
+      background: #dc2626;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      align-self: flex-start;
+    }
+
+    .warning-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #991b1b;
+      line-height: 1.3;
+    }
+
+    .warning-body {
+      font-size: 13px;
+      color: #7f1d1d;
+      line-height: 1.55;
+    }
+
+    /* Drive Folder Row Structure */
+    .folder-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+      justify-content: space-between;
+    }
+
+    .folder-row {
+      display: grid;
+      grid-template-columns: 240px 170px 1fr;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 10px 18px;
+      gap: 16px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      transition: transform 0.2s ease;
+    }
+
+    .folder-row:hover {
+      transform: translateX(4px);
+      border-color: #94a3b8;
+    }
+
+    .folder-code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: #0369a1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .folder-perm {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .perm-read {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .perm-write {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .perm-gate {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .perm-sync {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .folder-desc {
+      font-size: 12.5px;
+      color: #334155;
+      line-height: 1.4;
+    }
+
+    .folder-desc strong {
+      color: #0f172a;
+    }
+
+    /* RACI Agent Cards */
+    .agent-row-card {
+      display: grid;
+      grid-template-columns: 260px 110px 1fr;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-left: 5px solid var(--agent-color, #0284c7);
+      border-radius: 8px;
+      padding: 12px 18px;
+      gap: 16px;
+    }
+
+    .agent-id {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .agent-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+      font-family: var(--font-mono);
+    }
+
+    .agent-role {
+      font-size: 11.5px;
+      color: #64748b;
+    }
+
+    .raci-tag {
+      background: var(--agent-color, #0284c7);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 4px;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+
+    .agent-task {
+      font-size: 12.5px;
+      color: #334155;
+      line-height: 1.45;
+    }
+
+    /* Steps Flow Cards */
+    .step-card {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    }
+
+    .step-header {
+      background: var(--step-bg, #0284c7);
+      color: #fff;
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .step-body {
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .step-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.35;
+    }
+
+    .step-desc {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    .step-code-mock {
+      background: #0f172a;
+      color: #38bdf8;
+      padding: 10px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.4;
+      margin-top: auto;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Big Metric Display */
+    .metric-hero {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .metric-val {
+      font-size: 38px;
+      font-weight: 800;
+      color: var(--card-accent, #059669);
+      font-family: var(--font-mono);
+      line-height: 1;
+    }
+
+    .metric-sub {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    /* Title Slide Specials */
+    .title-wrapper {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .title-pill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(5, 150, 105, 0.15);
+      border: 1px solid rgba(5, 150, 105, 0.3);
+      color: #34d399;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      align-self: flex-start;
+    }
+
+    .main-hero-title {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      margin-top: 18px;
+    }
+
+    .main-hero-sub {
+      font-size: 16px;
+      color: #94a3b8;
+      line-height: 1.6;
+      max-width: 900px;
+      margin-top: 12px;
+    }
+
+    .title-pillars-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .title-pillar-item {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 16px 18px;
+      backdrop-filter: blur(8px);
+    }
+
+    .t-pil-head {
+      font-size: 13px;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 4px;
+    }
+
+    .t-pil-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+
+    .title-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 16px;
+      font-size: 11.5px;
+      color: #64748b;
+    }
+
+    /* Speaker Notes Drawer */
+    .speaker-drawer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #0f172a;
+      border-top: 2px solid #0284c7;
+      color: #cbd5e1;
+      padding: 16px 32px;
+      font-size: 13.5px;
+      line-height: 1.6;
+      transform: translateY(100%);
+      transition: transform 0.25s ease;
+      z-index: 90;
+      max-height: 160px;
+      overflow-y: auto;
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .speaker-drawer.open {
+      transform: translateY(0);
+    }
+
+    .drawer-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #38bdf8;
+      margin-bottom: 4px;
+      letter-spacing: 0.8px;
+    }
+
+    /* Keyboard Shortcuts Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+
+    .modal-card {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 24px;
+      width: 420px;
+      color: #f1f5f9;
+    }
+
+    .modal-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #38bdf8;
+    }
+
+    .key-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 13px;
+    }
+
+    .key-badge {
+      background: #334155;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 11px;
+      color: #f8fafc;
+    }
+
+    /* Print & Fullscreen styles */
+    @media print {
+      .top-bar, .speaker-drawer, .modal-overlay {
+        display: none !important;
+      }
+      body {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      .viewport-wrapper {
+        margin: 0 !important;
+        padding: 0 !important;
+        height: auto !important;
+        width: 100% !important;
+      }
+      .deck-frame {
+        box-shadow: none !important;
+        max-width: none !important;
+        width: 100% !important;
+        border-radius: 0 !important;
+      }
+      .slide-page {
+        position: relative !important;
+        opacity: 1 !important;
+        transform: none !important;
+        page-break-after: always;
+        height: 100vh !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Control Bar -->
+  <header class="top-bar">
+    <div class="brand-tag">
+      <span>AI4A PPT ARCHITECT</span>
+      <span class="brand-badge">MCKINSEY STYLE 16:9</span>
+    </div>
+    <div class="controls-group">
+      <button class="btn-ctrl" id="prevBtn" title="Slide trước (Mũi tên Trái)">◀ Trước</button>
+      <span class="slide-counter" id="slideIndicator">1 / 8</span>
+      <button class="btn-ctrl" id="nextBtn" title="Slide tiếp (Mũi tên Phải / Phím Cách)">Tiếp ▶</button>
+      <div style="width: 1px; height: 20px; background: rgba(255,255,255,0.1); margin: 0 4px;"></div>
+      <button class="btn-ctrl" id="notesBtn" title="Bật/Tắt Ghi chú diễn giả (Phím S)">📝 Notes</button>
+      <button class="btn-ctrl" id="fsBtn" title="Toàn màn hình (Phím F)">⛶ Fullscreen</button>
+      <button class="btn-ctrl" id="helpBtn" title="Phím tắt">⌨ Phím tắt</button>
+    </div>
+  </header>
+
+  <!-- Viewport Presentation Wrapper -->
+  <main class="viewport-wrapper">
+    <div class="deck-frame" id="deckFrame">
+
+      <!-- SLIDE 1: BÌA TRÌNH CHIẾU ĐIỀU HÀNH (Dark Theme) -->
+      <section class="slide-page slide-dark active" data-slide="1">
+        <div class="title-wrapper">
+          <div>
+            <div class="title-pill-tag">
+              <span>●</span> AI4A EXECUTIVE ARCHITECTURE BOARD
+            </div>
+            <h1 class="main-hero-title">
+              KIẾN TRÚC DASHBOARD DOANH NGHIỆP LỚN<br>
+              & ĐIỀU PHỐI MULTI-AGENT TRÊN GOOGLE DRIVE
+            </h1>
+            <p class="main-hero-sub">
+              Cẩm nang quy chuẩn phân quyền 5 tầng thư mục, cơ chế khóa tệp trạng thái (State-Lock) và kỹ thuật tiền tổng hợp (Pre-aggregation) chống xung đột cho hệ sinh thái Agentic AI.
+            </p>
+          </div>
+
+          <div class="title-pillars-bar">
+            <div class="title-pillar-item">
+              <div class="t-pil-head">📁 5 Tầng Phân Lập Drive</div>
+              <div class="t-pil-sub">Tách bạch ranh giới Read/Write, triệt tiêu 100% rủi ro ghi đè tệp.</div>
+            </div>
+            <div class="title-pillar-item">
+              <div class="t-pil-head">🔒 Cơ Chế State-Locking</div>
+              <div class="t-pil-sub">Giao thức manifest.json & lock file ngăn chặn xung đột đồng bộ.</div>
+            </div>
+            <div class="title-pillar-item">
+              <div class="t-pil-head">⚡ Pre-aggregation &lt; 1.5MB</div>
+              <div class="t-pil-sub">Nén 97% payload dữ liệu thô, mở tức thì &lt; 0.5s trên Mobile & Zalo.</div>
+            </div>
+          </div>
+
+          <div class="title-footer">
+            <span>Dự án: AI4A Multi-Agent Architecture | Antigravity IDE</span>
+            <span>Chuẩn: McKinsey / BCG Executive 16:9 Widescreen</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 2: EXECUTIVE SUMMARY (3 Value Pillars) -->
+      <section class="slide-page" data-slide="2">
+        <div class="slide-meta-header">
+          <div class="category-title">TÓM TẮT ĐIỀU HÀNH 60 GIÂY</div>
+          <h2 class="action-title">
+            Chìa Khóa Làm Dashboard Lớn Nằm Ở Phân Tầng Thư Mục Bất Biến Và Bàn Giao Kèm Khóa Trạng Thái Giữa Các Agent
+          </h2>
+        </div>
+        <div class="slide-body">
+          <div class="grid-3-col">
+            <!-- Pillar 1 -->
+            <div class="exec-card card-accent-top" style="--card-accent: var(--accent-blue);">
+              <div class="card-tag">Trụ Cột 1</div>
+              <h3 class="card-heading">Kiến Trúc Drive 5 Tầng Phân Lập</h3>
+              <div class="metric-hero">
+                <span class="metric-val">5</span>
+                <span class="metric-sub">Phân vùng độc lập</span>
+              </div>
+              <ul class="card-bullet-list">
+                <li>Mỗi Agent chỉ có quyền ghi trên duy nhất 1 folder sở hữu.</li>
+                <li>Thư mục đầu ra Agent trước là đầu vào Chỉ Đọc của Agent sau.</li>
+                <li>Không bao giờ cho phép 2 Agent cùng cập nhật 1 tệp đồng thời.</li>
+                <li>Triệt tiêu hoàn toàn lỗi tạo file bản sao <code>(1)</code> của Drive.</li>
+              </ul>
+            </div>
+
+            <!-- Pillar 2 -->
+            <div class="exec-card card-accent-top" style="--card-accent: var(--accent-green);">
+              <div class="card-tag">Trụ Cột 2</div>
+              <h3 class="card-heading">Giao Thức State-Lock & Hand-off</h3>
+              <div class="metric-hero">
+                <span class="metric-val" style="color: var(--accent-green);">100%</span>
+                <span class="metric-sub">Kiểm soát trạng thái</span>
+              </div>
+              <ul class="card-bullet-list">
+                <li>Điều phối hàng đợi tập trung qua file <code>task_manifest.json</code>.</li>
+                <li>Agent sau chỉ bắt đầu khi nhận tín hiệu <code>PASSED</code> từ QA.</li>
+                <li>QA Auditor đóng vai trò chốt chặn độc lập (Veto Power).</li>
+                <li>Tự động rollback nếu đối soát số liệu sai lệch vượt ngưỡng 0%.</li>
+              </ul>
+            </div>
+
+            <!-- Pillar 3 -->
+            <div class="exec-card card-accent-top" style="--card-accent: var(--accent-amber);">
+              <div class="card-tag">Trụ Cột 3</div>
+              <h3 class="card-heading">Pre-aggregation Nén Dữ Liệu 97%</h3>
+              <div class="metric-hero">
+                <span class="metric-val" style="color: var(--accent-amber);">&lt; 1.5MB</span>
+                <span class="metric-sub">Dung lượng tải trang</span>
+              </div>
+              <ul class="card-bullet-list">
+                <li>Tuyệt đối không nhúng file thô 50MB+ vào code giao diện web.</li>
+                <li>Tiền tổng hợp sẵn các cube chỉ số theo Vùng / Quản lý / Tuần.</li>
+                <li>Mở siêu tốc &lt; 0.5s trên Google Chrome Mobile và iPad.</li>
+                <li>Tích hợp thẻ ảnh báo cáo Zalo 30s và copy tin nhắn chốt số.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 3: 3 CẠM BẪY TỬ THẦN TRÊN GOOGLE DRIVE -->
+      <section class="slide-page" data-slide="3">
+        <div class="slide-meta-header">
+          <div class="category-title" style="color: var(--accent-red);">THÁCH THỨC & CẢNH BÁO NGUY CƠ</div>
+          <h2 class="action-title">
+            Môi Trường Drive Dùng Chung Dễ Gây Đổ Vỡ Hệ Thống Do Xung Đột Sync, Dữ Liệu Nặng Và Sai Số Không Kiểm Soát
+          </h2>
+        </div>
+        <div class="slide-body">
+          <div class="grid-3-col">
+            <div class="warning-card">
+              <div class="warning-badge-header">⚠️ CẠM BẪY 1</div>
+              <div class="warning-title">Xung Đột Ghi Đè File (Race Condition)</div>
+              <div class="warning-body">
+                Khi 2 agent cùng mở và cập nhật 1 file Excel/JSON, Google Drive tự động sinh file bản sao có đuôi <code>(1)</code>.
+                <br><br>
+                <strong>Hậu quả:</strong> Gây đứt gãy luồng pipeline tự động, agent phía sau đọc dữ liệu cũ chưa cập nhật và sinh kết quả rác.
+              </div>
+            </div>
+
+            <div class="warning-card">
+              <div class="warning-badge-header" style="background: var(--accent-amber);">⚠️ CẠM BẪY 2</div>
+              <div class="warning-title">Dashboard Quá Tải Dung Lượng (Payload Bloat)</div>
+              <div class="warning-body">
+                Nhúng trực tiếp bảng dữ liệu thô 50MB - 150MB vào mã nguồn HTML/JS dashboard khiến trình duyệt mất 15-30 giây để tải.
+                <br><br>
+                <strong>Hậu quả:</strong> Điện thoại cạn kiệt RAM, trình duyệt sập tab (crash), lãnh đạo không thể theo dõi số liệu khi di chuyển.
+              </div>
+            </div>
+
+            <div class="warning-card">
+              <div class="warning-badge-header">⚠️ CẠM BẪY 3</div>
+              <div class="warning-title">Dữ Liệu Bẩn Lan Truyền (Garbage Propagation)</div>
+              <div class="warning-body">
+                Agent vẽ biểu đồ lấy trực tiếp file thô chưa qua làm sạch dị thường và chưa đối soát qua QA Auditor.
+                <br><br>
+                <strong>Hậu quả:</strong> Biểu đồ hiển thị lỗi chia cho 0, số liệu Sell-in không khớp báo cáo tài chính, làm mất uy tín phòng ban.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 4: CẤU TRÚC THƯ MỤC GOOGLE DRIVE 5 TẦNG -->
+      <section class="slide-page" data-slide="4">
+        <div class="slide-meta-header">
+          <div class="category-title">MÔ HÌNH HẠ TẦNG GOOGLE DRIVE</div>
+          <h2 class="action-title">
+            Thiết Lập 5 Phân Vùng Chuyên Biệt Trên Drive Để Quy Định Rõ Ràng Ranh Giới Đọc - Ghi Cho Từng Agent
+          </h2>
+        </div>
+        <div class="slide-body">
+          <div class="folder-list">
+            <div class="folder-row">
+              <div class="folder-code">📁 00_RAW_INGESTION/</div>
+              <div><span class="folder-perm perm-read">Chỉ Đọc (Read-Only)</span></div>
+              <div class="folder-desc"><strong>ERP / DMS Extract:</strong> Chứa dữ liệu gốc trích xuất từ hệ thống. Toàn bộ Agent bị cấm ghi đè.</div>
+            </div>
+
+            <div class="folder-row">
+              <div class="folder-code">📁 01_CLEANSED_DATA/</div>
+              <div><span class="folder-perm perm-write">Độc Quyền Ghi</span></div>
+              <div class="folder-desc"><strong>Sở hữu bởi ai4a-data-cleaner:</strong> Lưu dữ liệu chuẩn hóa UTF-8 tiếng Việt, lọc trùng lặp và khử null an toàn.</div>
+            </div>
+
+            <div class="folder-row">
+              <div class="folder-code">📁 02_PRE_AGGREGATED/</div>
+              <div><span class="folder-perm perm-write">Độc Quyền Ghi</span></div>
+              <div class="folder-desc"><strong>Sở hữu bởi ai4a-dashboard-architect:</strong> Chứa các file Data Cubes (Fact/Dim) đã nén kích thước &lt; 1.5MB.</div>
+            </div>
+
+            <div class="folder-row">
+              <div class="folder-code">📁 03_DASHBOARD_CORE/</div>
+              <div><span class="folder-perm perm-write">Độc Quyền Ghi</span></div>
+              <div class="folder-desc"><strong>Sở hữu bởi ai4a-dashboard-architect:</strong> Chứa file Single HTML, style CSS và bộ công cụ chụp ảnh Zalo 30s.</div>
+            </div>
+
+            <div class="folder-row">
+              <div class="folder-code">📁 04_RELEASE_AUDIT/</div>
+              <div><span class="folder-perm perm-gate">Cổng Kiểm Toán</span></div>
+              <div class="folder-desc"><strong>Sở hữu bởi ai4a-qa-auditor:</strong> Báo cáo đối soát số liệu Zero-Discrepancy và bản phát hành ký duyệt cho BOD.</div>
+            </div>
+
+            <div class="folder-row">
+              <div class="folder-code" style="color: #64748b;">📁 _SYNC_CONTROL/</div>
+              <div><span class="folder-perm perm-sync">Điều Phối Chung</span></div>
+              <div class="folder-desc"><strong>Hàng đợi trạng thái:</strong> Lưu file <code>task_manifest.json</code> và cờ <code>pipeline.lock</code> để quản lý lượt chạy liên agent.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: MA TRẬN RACI CHO CÁC AGENT -->
+      <section class="slide-page" data-slide="5">
+        <div class="slide-meta-header">
+          <div class="category-title">PHÂN BỔ TRÁCH NHIỆM CHUYÊN BIỆT</div>
+          <h2 class="action-title">
+            Mỗi Agent Giữ Một Chốt Chặn Độc Lập Theo Ma Trận RACI Để Triệt Tiêu Chồng Chéo Nhiệm Vụ
+          </h2>
+        </div>
+        <div class="slide-body" style="display: flex; flex-direction: column; gap: 10px; justify-content: space-between;">
+          <div class="agent-row-card" style="--agent-color: #64748b;">
+            <div class="agent-id">
+              <span class="agent-name">ai4a-brainstorm & Lead</span>
+              <span class="agent-role">Orchestrator & Task Master</span>
+            </div>
+            <div><span class="raci-tag">ĐIỀU PHỐI</span></div>
+            <div class="agent-task">Khảo sát yêu cầu bài toán, phân rã user stories thành các sub-tasks độc lập, phát hành vé trong <code>task_manifest.json</code>.</div>
+          </div>
+
+          <div class="agent-row-card" style="--agent-color: var(--accent-green);">
+            <div class="agent-id">
+              <span class="agent-name">ai4a-data-cleaner</span>
+              <span class="agent-role">Data Cleansing Engineer</span>
+            </div>
+            <div><span class="raci-tag">LÀM SẠCH</span></div>
+            <div class="agent-task">Khử trùng lặp, xử lý giá trị khuyết thiếu (null/NaN), chuẩn hóa ngày tháng, đồng bộ UTF-8 tiếng Việt, chống lỗi chia cho 0.</div>
+          </div>
+
+          <div class="agent-row-card" style="--agent-color: var(--accent-blue);">
+            <div class="agent-id">
+              <span class="agent-name">ai4a-dashboard-architect</span>
+              <span class="agent-role">BI & Dashboard Architect</span>
+            </div>
+            <div><span class="raci-tag">KIẾN TRÚC</span></div>
+            <div class="agent-task">Mô hình hóa Star Schema (Fact/Dim), thiết kế Pre-aggregation Engine giảm file 50MB xuống &lt; 1.5MB, dựng Single-file HTML Dashboard.</div>
+          </div>
+
+          <div class="agent-row-card" style="--agent-color: var(--accent-red);">
+            <div class="agent-id">
+              <span class="agent-name">ai4a-qa-auditor</span>
+              <span class="agent-role">Pre-release Quality Gatekeeper</span>
+            </div>
+            <div><span class="raci-tag">KIỂM TOÁN</span></div>
+            <div class="agent-task">Đối soát số học độc lập (Zero Discrepancy Reconciliation = 0), rà soát bảo mật, kiểm tra tốc độ phản hồi và độ mượt mà trên Mobile.</div>
+          </div>
+
+          <div class="agent-row-card" style="--agent-color: var(--accent-amber);">
+            <div class="agent-id">
+              <span class="agent-name">ai4a-software-engineer</span>
+              <span class="agent-role">Systems & Debugging Specialist</span>
+            </div>
+            <div><span class="raci-tag">GỠ LỖI</span></div>
+            <div class="agent-task">Standby điều tra nguyên nhân gốc rễ (Root Cause Analysis - RCA), xử lý lỗi runtime/memory leak và phát hành bản vá tối thiểu (Patch).</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 6: GIAO THỨC KHÓA TỆP & BÀN GIAO (Hand-off Protocol) -->
+      <section class="slide-page" data-slide="6">
+        <div class="slide-meta-header">
+          <div class="category-title">GIAO THỨC ĐIỀU PHỐI LIÊN AGENT</div>
+          <h2 class="action-title">
+            Quy Trình Hand-off 4 Bước Đảm Bảo Agent Sau Chỉ Xử Lý Khi Có Chứng Nhận PASSED Của QA Auditor
+          </h2>
+        </div>
+        <div class="slide-body">
+          <div class="grid-4-col">
+            <!-- Step 1 -->
+            <div class="step-card">
+              <div class="step-header" style="--step-bg: var(--accent-blue);">
+                <span>BƯỚC 1</span>
+                <span>CLAIM LOCK</span>
+              </div>
+              <div class="step-body">
+                <div class="step-title">Ghi File Khóa Lock</div>
+                <div class="step-desc">Agent nhận task tạo file <code>.pipeline.lock</code> trong <code>_SYNC_CONTROL/</code> để thông báo chiếm quyền xử lý.</div>
+                <div class="step-code-mock">
+                  {<br>
+                  &nbsp;&nbsp;"task": "CLEANSE",<br>
+                  &nbsp;&nbsp;"locked_by": "cleaner"<br>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-card">
+              <div class="step-header" style="--step-bg: var(--accent-amber);">
+                <span>BƯỚC 2</span>
+                <span>ATOMIC WRITE</span>
+              </div>
+              <div class="step-body">
+                <div class="step-title">Xử Lý Ra File Tạm</div>
+                <div class="step-desc">Agent tạo file nháp <code>data_stage.tmp</code>. Tuyệt đối không ghi đè vào thư mục đích đang chạy.</div>
+                <div class="step-code-mock">
+                  saveAs(<br>
+                  &nbsp;&nbsp;"01_CLEANSED/<br>
+                  &nbsp;&nbsp;&nbsp;sales_utf8.tmp"<br>
+                  )
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-card">
+              <div class="step-header" style="--step-bg: var(--accent-red);">
+                <span>BƯỚC 3</span>
+                <span>QA AUDIT GATE</span>
+              </div>
+              <div class="step-body">
+                <div class="step-title">Đối Soát Cấp Chứng Nhận</div>
+                <div class="step-desc">QA Auditor chạy script đối soát sai số = 0%. Nếu đạt cấp chứng nhận <code>audit_status: PASSED</code>.</div>
+                <div class="step-code-mock">
+                  reconciliation:<br>
+                  &nbsp;&nbsp;diff: 0.00%<br>
+                  &nbsp;&nbsp;status: PASSED
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step-card">
+              <div class="step-header" style="--step-bg: var(--accent-green);">
+                <span>BƯỚC 4</span>
+                <span>PROMOTE & UNLOCK</span>
+              </div>
+              <div class="step-body">
+                <div class="step-title">Thăng Hạng & Mở Khóa</div>
+                <div class="step-desc">Đổi tên file chính thức, xóa file lock và cập nhật trạng thái sẵn sàng cho Agent tiếp theo trong pipeline.</div>
+                <div class="step-code-mock">
+                  rename(.tmp -> .json)<br>
+                  remove(.pipeline.lock)<br>
+                  notify(NextAgent)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 7: CHIẾN LƯỢC PRE-AGGREGATION NÉN DỮ LIỆU -->
+      <section class="slide-page" data-slide="7">
+        <div class="slide-meta-header">
+          <div class="category-title">TỐI ƯU HÓA HIỆU NĂNG DASHBOARD</div>
+          <h2 class="action-title">
+            Nén Dữ Liệu Đa Chiều Giúp Thu Gọn Kích Thước File 97%, Đạt Tốc Độ Mở Trang Dưới 0.5 Giây Trên Mobile
+          </h2>
+        </div>
+        <div class="slide-body">
+          <div class="grid-2-col">
+            <!-- Left Column: Old way -->
+            <div class="exec-card" style="background: #fef2f2; border-color: #fecaca;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <span class="warning-badge-header" style="background: #dc2626;">❌ CÁCH LÀM TRUYỀN THỐNG</span>
+                <span style="font-size: 12px; font-weight: 700; color: #dc2626;">TẢI NẶNG & LAG</span>
+              </div>
+              <div class="metric-hero">
+                <span class="metric-val" style="color: #dc2626;">50MB+</span>
+                <span class="metric-sub">Dung lượng file thô</span>
+              </div>
+              <ul class="card-bullet-list" style="color: #7f1d1d;">
+                <li>Đẩy toàn bộ hàng triệu dòng giao dịch chi tiết lên trình duyệt web.</li>
+                <li>Thời gian tải trang mất 15 đến 30 giây mới hiển thị biểu đồ.</li>
+                <li>Trình duyệt mobile bị cạn kiệt RAM, thường xuyên đứng hình hoặc crash.</li>
+                <li>Tốn kém dung lượng 4G/5G khi nhiều cấp quản lý cùng truy cập xem số.</li>
+                <li>Lãnh đạo thị trường không thể mở được báo cáo khi ở vùng sóng yếu.</li>
+              </ul>
+            </div>
+
+            <!-- Right Column: AI4A Pre-aggregation -->
+            <div class="exec-card" style="background: #f0fdf4; border-color: #bbf7d0;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <span class="warning-badge-header" style="background: var(--accent-green);">✅ CHUẨN MỰC AI4A PRE-AGGREGATION</span>
+                <span style="font-size: 12px; font-weight: 700; color: var(--accent-green);">MỞ TỨC THÌ &lt; 0.5S</span>
+              </div>
+              <div class="metric-hero">
+                <span class="metric-val" style="color: var(--accent-green);">&lt; 1.5MB</span>
+                <span class="metric-sub">Nén giảm 97% kích thước</span>
+              </div>
+              <ul class="card-bullet-list" style="color: #14532d;">
+                <li>Agent tính toán sẵn các chỉ số tổng hợp theo Dimension (Vùng/Tuần/SKU).</li>
+                <li>Thời gian mở trang tức thì &lt; 0.5s trên mọi thiết bị và hệ điều hành.</li>
+                <li>Thiết kế Single-file HTML độc lập: Mở offline không cần cài server.</li>
+                <li>Tích hợp xuất thẻ ảnh Zalo 30s siêu nét và copy tin nhắn chốt số 1 chạm.</li>
+                <li>Bảo mật an toàn: Không lộ thông tin dữ liệu nhạy cảm cấp dòng lên client.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 8: LỘ TRÌNH TRIỂN KHAI & CHECKLIST (Dark Theme) -->
+      <section class="slide-page slide-dark" data-slide="8">
+        <div class="slide-meta-header">
+          <div class="category-title" style="color: #34d399;">LỘ TRÌNH TRIỂN KHAI & CHECKLIST</div>
+          <h2 class="action-title">
+            Hoàn Tất Bàn Giao Dashboard Trong 4 Giai Đoạn Chặt Chẽ Với Chữ Ký Nghiệm Thu Của QA Auditor
+          </h2>
+        </div>
+        <div class="slide-body">
+          <div class="grid-2-col">
+            <!-- Timeline -->
+            <div class="exec-card card-dark">
+              <div class="card-tag" style="color: #38bdf8;">LỘ TRÌNH 4 GIAI ĐOẠN SPRINT</div>
+              <h3 class="card-heading" style="color: #f8fafc;">Tiến Độ Bàn Giao Hệ Thống</h3>
+              <ul class="card-bullet-list" style="color: #cbd5e1; gap: 14px;">
+                <li>
+                  <strong style="color: #38bdf8;">Giai đoạn 1 (D1):</strong> Thiết lập 5 folder Google Drive & khởi tạo <code>task_manifest.json</code>.
+                </li>
+                <li>
+                  <strong style="color: #34d399;">Giai đoạn 2 (D2):</strong> Data Cleaner làm sạch dữ liệu và kiểm toán schema UTF-8.
+                </li>
+                <li>
+                  <strong style="color: #fbbf24;">Giai đoạn 3 (D3):</strong> Dashboard Architect tạo Data Cubes & dựng Single HTML Dashboard.
+                </li>
+                <li>
+                  <strong style="color: #f87171;">Giai đoạn 4 (D4):</strong> QA Auditor đối soát sai số = 0 & cấp quyền phát hành chính thức cho BOD.
+                </li>
+              </ul>
+            </div>
+
+            <!-- Checklist -->
+            <div class="exec-card card-dark">
+              <div class="card-tag" style="color: #34d399;">CHECKLIST NGHIỆM THU TRƯỚC KHI BÀN GIAO</div>
+              <h3 class="card-heading" style="color: #f8fafc;">Tiêu Chí Chốt Chặn An Toàn</h3>
+              <ul class="card-bullet-list" style="color: #cbd5e1; gap: 12px;">
+                <li><span style="color: #34d399; font-weight: bold;">[✔]</span> Không còn bất kỳ file <code>.pipeline.lock</code> nào tồn đọng trên Drive.</li>
+                <li><span style="color: #34d399; font-weight: bold;">[✔]</span> Dung lượng file Single HTML Dashboard cuối cùng &lt; 1.5MB.</li>
+                <li><span style="color: #34d399; font-weight: bold;">[✔]</span> Báo cáo reconciliation đối soát số liệu đạt độ lệch tuyệt đối 0.00%.</li>
+                <li><span style="color: #34d399; font-weight: bold;">[✔]</span> Đã test mở mượt mà trên Google Chrome Mobile, Safari & Tablet.</li>
+                <li><span style="color: #34d399; font-weight: bold;">[✔]</span> Tính năng xuất thẻ ảnh Zalo 30s và copy tin nhắn chốt số hoạt động tốt.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Speaker Notes Drawer -->
+  <aside class="speaker-drawer" id="speakerDrawer">
+    <div class="drawer-title">GHI CHÚ DIỄN GIẢ (SPEAKER NOTES) - SLIDE <span id="notesSlideNum">1</span></div>
+    <div id="notesContent">Đang tải ghi chú...</div>
+  </aside>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <div class="modal-overlay" id="helpModal">
+    <div class="modal-card">
+      <h3>PHÍM TẮT THUYẾT TRÌNH</h3>
+      <div class="key-row">
+        <span>Slide tiếp theo</span>
+        <span class="key-badge">Mũi tên Phải / Phím Cách</span>
+      </div>
+      <div class="key-row">
+        <span>Slide trước đó</span>
+        <span class="key-badge">Mũi tên Trái</span>
+      </div>
+      <div class="key-row">
+        <span>Bật/Tắt Toàn màn hình</span>
+        <span class="key-badge">F</span>
+      </div>
+      <div class="key-row">
+        <span>Bật/Tắt Ghi chú diễn giả</span>
+        <span class="key-badge">S</span>
+      </div>
+      <div class="key-row">
+        <span>Về Slide đầu / cuối</span>
+        <span class="key-badge">Home / End</span>
+      </div>
+      <div style="margin-top: 18px; text-align: right;">
+        <button class="btn-ctrl" id="closeHelpBtn">Đóng (Esc)</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const speakerNotes = {
+      1: "Kính thưa Ban Giám Đốc và các anh chị quản lý, bài trình bày hôm nay sẽ giải quyết bài toán cốt lõi: Làm sao để 5 Agent AI chuyên biệt có thể cùng làm việc trên 1 thư mục Google Drive duy nhất, tạo ra một Dashboard điều hành khổng lồ mà không hề xảy ra xung đột file, nghẽn mạng hay sai lệch số liệu.",
+      2: "Nếu chỉ có 60 giây để tóm tắt cho lãnh đạo, công thức thành công bao gồm 3 yếu tố: Phân tầng dữ liệu bất biến, giao tiếp qua file trạng thái chống ghi đè, và nén dữ liệu trước khi đưa lên giao diện.",
+      3: "Lý do phần lớn các dự án Multi-Agent thất bại trên Google Drive không nằm ở thuật toán AI, mà nằm ở hạ tầng chia sẻ file thiếu ranh giới, dẫn tới việc các Agent dẫm chân lên nhau và sinh file trùng lặp.",
+      4: "Nguyên tắc vàng: Không có bất kỳ file nào được ghi đồng thời bởi 2 Agent. Thư mục đầu ra của Agent này là thư mục đầu vào dạng Chỉ Đọc của Agent tiếp theo trong chuỗi xử lý.",
+      5: "Mỗi Agent là một mắt xích chuyên nghiệp. QA Auditor đóng vai trò là cửa ải độc lập có quyền từ chối (Veto power) nếu dữ liệu chưa khớp 100% với báo cáo tài chính.",
+      6: "Quy trình này loại bỏ 100% rủi ro race-condition ngay cả khi mạng đồng bộ Google Drive bị trễ từ 5 đến 10 giây nhờ cơ chế Atomic Writing và Lock File.",
+      7: "Lãnh đạo xem dashboard trên điện thoại giữa các cuộc họp hoặc trên xe di chuyển. Do đó, việc pre-aggregate dữ liệu để file nhẹ dưới 1.5MB là yêu cầu bắt buộc chứ không phải tùy chọn.",
+      8: "Khi tuân thủ nghiêm ngặt lộ trình 4 giai đoạn và checklist nghiệm thu này, dự án Dashboard quy mô lớn của doanh nghiệp sẽ vận hành ổn định, tự động hóa cao và sẵn sàng nhân rộng."
+    };
+
+    let currentSlide = 1;
+    const totalSlides = 8;
+
+    const slides = document.querySelectorAll('.slide-page');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideIndicator = document.getElementById('slideIndicator');
+    const notesBtn = document.getElementById('notesBtn');
+    const speakerDrawer = document.getElementById('speakerDrawer');
+    const notesSlideNum = document.getElementById('notesSlideNum');
+    const notesContent = document.getElementById('notesContent');
+    const fsBtn = document.getElementById('fsBtn');
+    const helpBtn = document.getElementById('helpBtn');
+    const helpModal = document.getElementById('helpModal');
+    const closeHelpBtn = document.getElementById('closeHelpBtn');
+    const deckFrame = document.getElementById('deckFrame');
+
+    function showSlide(num) {
+      if (num < 1) num = 1;
+      if (num > totalSlides) num = totalSlides;
+      currentSlide = num;
+
+      slides.forEach(slide => {
+        const slideNum = parseInt(slide.getAttribute('data-slide'), 10);
+        slide.classList.toggle('active', slideNum === currentSlide);
+      });
+
+      slideIndicator.textContent = `${currentSlide} / ${totalSlides}`;
+      prevBtn.disabled = (currentSlide === 1);
+      nextBtn.disabled = (currentSlide === totalSlides);
+      prevBtn.style.opacity = (currentSlide === 1) ? '0.4' : '1';
+      nextBtn.style.opacity = (currentSlide === totalSlides) ? '0.4' : '1';
+
+      notesSlideNum.textContent = currentSlide;
+      notesContent.textContent = speakerNotes[currentSlide] || "Không có ghi chú cho slide này.";
+    }
+
+    prevBtn.addEventListener('click', () => showSlide(currentSlide - 1));
+    nextBtn.addEventListener('click', () => showSlide(currentSlide + 1));
+
+    notesBtn.addEventListener('click', () => {
+      speakerDrawer.classList.toggle('open');
+      notesBtn.classList.toggle('active');
+    });
+
+    fsBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    helpBtn.addEventListener('click', () => helpModal.style.display = 'flex');
+    closeHelpBtn.addEventListener('click', () => helpModal.style.display = 'none');
+    helpModal.addEventListener('click', (e) => {
+      if (e.target === helpModal) helpModal.style.display = 'none';
+    });
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (helpModal.style.display === 'flex') {
+        if (e.key === 'Escape') helpModal.style.display = 'none';
+        return;
+      }
+
+      switch (e.key) {
+        case 'ArrowRight':
+        case ' ':
+        case 'PageDown':
+          e.preventDefault();
+          showSlide(currentSlide + 1);
+          break;
+        case 'ArrowLeft':
+        case 'PageUp':
+          e.preventDefault();
+          showSlide(currentSlide - 1);
+          break;
+        case 'Home':
+          e.preventDefault();
+          showSlide(1);
+          break;
+        case 'End':
+          e.preventDefault();
+          showSlide(totalSlides);
+          break;
+        case 's':
+        case 'S':
+          speakerDrawer.classList.toggle('open');
+          notesBtn.classList.toggle('active');
+          break;
+        case 'f':
+        case 'F':
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+          } else {
+            document.exitFullscreen().catch(() => {});
+          }
+          break;
+        case '?':
+          helpModal.style.display = 'flex';
+          break;
+      }
+    });
+
+    // Initialize
+    showSlide(1);
+  </script>
+</body>
+</html>

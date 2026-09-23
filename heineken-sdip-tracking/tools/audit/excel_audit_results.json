@@ -1,0 +1,122 @@
+﻿[
+    {
+        "Category":  "thang 8",
+        "FileName":  "ASO detail.xlsx",
+        "SizeKB":  445,
+        "Sheet":  "Export",
+        "Rows":  6585,
+        "Cols":  12,
+        "Headers":  "Calendar_Month | 202608 | 202608 | Total | Total",
+        "Sample":  "Area_Name | City | Province | SubDCode | SubDName | OutletCode | OutletName | BeginDate | No Of Orders | Total Quantity | No Of Orders | Total Quantity"
+    },
+    {
+        "Category":  "thang 8",
+        "FileName":  "DIS Volume.xlsx",
+        "SizeKB":  5569.7,
+        "Sheet":  "Export",
+        "Rows":  90591,
+        "Cols":  15,
+        "Headers":  "From_Customer_ID[Geography] | From_Customer_ID[Region_Name] | From_Customer_ID[Area_Name] | TF_Outlet_Tracking_SalesOut[BuyFrom] | From_Customer_ID[Customer_ID] | From_Customer_ID[Seller_Name] | TF_Outlet_Tracking_SalesOut[To_Customer_ID] | To_Customer_ID[Customer_Name] | To_Customer_ID[Outlet_Address] | To_Customer_ID[Outlet_Type_Name] | TD_Calendar[Calendar_Month] | TD_Product[Brand_Name] | TD_Product[Line_Name] | TD_Product[ShortCode] | [UOM]",
+        "Sample":  "Mekong Delta | Mekong Delta 1 | South 2 | Distributor | 10260170 | TG12-Trung Tam Hoi Nghi | 66300016 | VƯỜN ẨM THỰC PHƯƠNG NAM | 101, Lý Thường Kiệt, P5, Phường Đạo Thạnh, Tỉnh Đồng Tháp | Group Social | 202607 | HEINEKEN | HEINEKEN 0.0 | H025 | 2"
+    },
+    {
+        "Category":  "thang 8",
+        "FileName":  "DIS Volume.xlsx",
+        "SizeKB":  5569.7,
+        "Sheet":  "Export Details",
+        "Rows":  2,
+        "Cols":  1,
+        "Headers":  "Data connected to Power BI: Click refresh to update.",
+        "Sample":  "Applied filters:\nCalendar_Year is 2026 and CurrentMonth is 202607 CurrentMonth is Current Month Calendar_Year is 2026 and CurrentMonth is 202607 CurrentMonth is Current Month\nConversion is Case\nGeography is Mekong Delta and Area_Name is South 2 Area_Name is South 9 Geography is Mekong Delta and Area_Name is South 2 Area_Name is South 9\nProduct_Type is 1"
+    },
+    {
+        "Category":  "thang 8",
+        "FileName":  "Overview.xlsx",
+        "SizeKB":  212.2,
+        "Sheet":  "Export",
+        "Rows":  3900,
+        "Cols":  29,
+        "Headers":  "SubD_ID | SubD_Name | AreaName | Sales In Volume | Sales Out Volume | SDIP | %SDIP | %SDIP AA | %SDIP BB | %Omnichannel | Stock Cover Days | SO vs SI | SKU/SubD | %Fill Rate 24h | %Digital ASO | ASO | Outlets/SubD | %ASO | AA Focus Target | AA Focus SI Actual | AA Focus SO Actual | AA Focus SO Adjusted | BB Normal Target | BB Normal SI Actual | BB Normal SO Actual | BB Normal SO Adjusted | Tiger North - SDIP Target | Tiger North - SDIP SI | Tiger North - SDIP SO",
+        "Sample":  "66300269 | THANH VŨ | South 2 | 10737 | 10038 | Yes | 87.88% | 1.028635 | 0.570856 | 100.00% | 0.52312 | 93.49% | 17 | 99.39% | 26.00% | 46 | 50 | 92.00% | 7683 | 8268"
+    },
+    {
+        "Category":  "thang 8",
+        "FileName":  "SCD.xlsx",
+        "SizeKB":  109.2,
+        "Sheet":  "Export",
+        "Rows":  1333,
+        "Cols":  13,
+        "Headers":  "Area_Name | City | SubD Code | SubD Name | Brand_Name | Pack_Size_Name | Package_Name | ShortCode | Sales_Name | Sales_In_Volume (30 days) | Sales_Out_Volume(30 days) | Stock | SCD",
+        "Sample":  "South 2 | Tỉnh Đồng Tháp | 66300121 | CHÚ CHÂU (CHÍN CHÂU) | HEINEKEN | Can | 25 CL | HS2 | Heineken Silver Sleek Can 24s (250) | 110 | 69 | 17 | 7.391304"
+    },
+    {
+        "Category":  "DIM",
+        "FileName":  "OL YTD.xlsx",
+        "SizeKB":  8767.2,
+        "Sheet":  "Export",
+        "Rows":  40278,
+        "Cols":  42,
+        "Headers":  "Code | Name | Status | StatusCode | Opensince | Demographic | Closedsince | VolumeTier | VisitFrequency | VisitFrequencyNumber | PreferredDay | PreferredWeekNumber | PlanVisitFrequency | PlanVisitFrequencyNumber | ChannelName | Address1 | Address2 | WardName | DistrictName | ProvinceName | Old_Address | Phone | Email | Contact Person | LeadBrand | SupportBrand | Lattitude | Longitude | PrimarySupplier | PrimarySupplierName | RegionName | AreaName | TerritoryName | SRID | SR Name | SR Email | SS ID | SS Name | SS Email | ASM Name | ASM Email | JDEVendorID",
+        "Sample":  "61406931 | ST King Mart | InActive | Closed | ######## | Rural | ######## | Undefined | Every 4 weeks | 4 | Monday |  | Every 4 weeks | 4 | Grocery Store | NA | Chung cư Diamon | Phường Hồng Gai | (22) | Tỉnh Quảng Ninh"
+    },
+    {
+        "Category":  "DIM",
+        "FileName":  "Product Name.xlsx",
+        "SizeKB":  20.4,
+        "Sheet":  "data",
+        "Rows":  371,
+        "Cols":  5,
+        "Headers":  "Product Name | Company | Sub Company | Repertoire | AA/BB",
+        "Sample":  "123.Zo Can 24s (330) | Competitor | GB |  | "
+    },
+    {
+        "Category":  "Fact",
+        "FileName":  "ASO detail.xlsx",
+        "SizeKB":  426.1,
+        "Sheet":  "Export",
+        "Rows":  6585,
+        "Cols":  12,
+        "Headers":  "Calendar_Month | 202608 | 202608 | Total | Total",
+        "Sample":  "Area_Name | City | Province | SubDCode | SubDName | OutletCode | OutletName | BeginDate | No Of Orders | Total Quantity | No Of Orders | Total Quantity"
+    },
+    {
+        "Category":  "Fact",
+        "FileName":  "DIS Volume.xlsx",
+        "SizeKB":  5046.5,
+        "Sheet":  "Export",
+        "Rows":  81490,
+        "Cols":  15,
+        "Headers":  "From_Customer_ID[Geography] | From_Customer_ID[Region_Name] | From_Customer_ID[Area_Name] | TF_Outlet_Tracking_SalesOut[BuyFrom] | From_Customer_ID[Customer_ID] | From_Customer_ID[Seller_Name] | TF_Outlet_Tracking_SalesOut[To_Customer_ID] | To_Customer_ID[Customer_Name] | To_Customer_ID[Outlet_Address] | To_Customer_ID[Outlet_Type_Name] | TD_Calendar[Calendar_Month] | TD_Product[Brand_Name] | TD_Product[Line_Name] | TD_Product[ShortCode] | [UOM]",
+        "Sample":  "Mekong Delta | Mekong Delta 1 | South 2 | Distributor | 10260170 | TG12-Trung Tam Hoi Nghi | 66300016 | VƯỜN ẨM THỰC PHƯƠNG NAM | 101, Lý Thường Kiệt, P5, Phường Đạo Thạnh, Tỉnh Đồng Tháp | Group Social | 202607 | HEINEKEN | HEINEKEN 0.0 | H025 | 2"
+    },
+    {
+        "Category":  "Fact",
+        "FileName":  "DIS Volume.xlsx",
+        "SizeKB":  5046.5,
+        "Sheet":  "Export Details",
+        "Rows":  2,
+        "Cols":  1,
+        "Headers":  "Data connected to Power BI: Click refresh to update.",
+        "Sample":  "Applied filters:\nCalendar_Year is 2026 and CurrentMonth is 202607 CurrentMonth is Current Month Calendar_Year is 2026 and CurrentMonth is 202607 CurrentMonth is Current Month\nConversion is Case\nGeography is Mekong Delta and Area_Name is South 2 Area_Name is South 9 Geography is Mekong Delta and Area_Name is South 2 Area_Name is South 9\nProduct_Type is 1"
+    },
+    {
+        "Category":  "Fact",
+        "FileName":  "Overview.xlsx",
+        "SizeKB":  246.8,
+        "Sheet":  "Export",
+        "Rows":  3900,
+        "Cols":  29,
+        "Headers":  "SubD_ID | SubD_Name | AreaName | Sales In Volume | Sales Out Volume | SDIP | %SDIP | %SDIP AA | %SDIP BB | %Omnichannel | Stock Cover Days | SO vs SI | SKU/SubD | %Fill Rate 24h | %Digital ASO | ASO | Outlets/SubD | %ASO | AA Focus Target | AA Focus SI Actual | AA Focus SO Actual | AA Focus SO Adjusted | BB Normal Target | BB Normal SI Actual | BB Normal SO Actual | BB Normal SO Adjusted | Tiger North - SDIP Target | Tiger North - SDIP SI | Tiger North - SDIP SO",
+        "Sample":  "67052001 | HỒNG ĐÀO | South 9 | 17,567 | 14,316 | Yes |  |  | 1 |  | 3 | 81.49% | 12 | 90.14% | 45.66% | 180 | 219 | 82.19% | 10129 | 8629"
+    },
+    {
+        "Category":  "Fact",
+        "FileName":  "SCD.xlsx",
+        "SizeKB":  438.1,
+        "Sheet":  "Export",
+        "Rows":  6585,
+        "Cols":  12,
+        "Headers":  "Calendar_Month | 202608 | 202608 | Total | Total",
+        "Sample":  "Area_Name | City | Province | SubDCode | SubDName | OutletCode | OutletName | BeginDate | No Of Orders | Total Quantity | No Of Orders | Total Quantity"
+    }
+]

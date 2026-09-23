@@ -1,0 +1,62 @@
+﻿[
+    {
+        "Category":  "thang 8 Target South 2",
+        "FileName":  "Sub DistributorTarget-202608-[South 2]_A (2).xlsx",
+        "SizeKB":  67.4,
+        "Sheet":  "Data",
+        "Rows":  54,
+        "Cols":  134,
+        "Headers":  "Zone | Name | RefCode | HeaderId | ParentId | Program | AA | BB | Easy To Drink | Good Value | Mainstream Full-Bodied | New Repertoire | Premium Full-Bodied | Premium Modern Light | Total | SM32 | BIX",
+        "Sample":  " |  |  |  |  |  | Target | Revised | Gap | %Gap | Target | Revised | Gap | %Gap | Target | Revised | Gap | %Gap | Target | Revised"
+    },
+    {
+        "Category":  "thang 8 Target South 9",
+        "FileName":  "Sub DistributorTarget-202608-[South 9]_F (2).xlsx",
+        "SizeKB":  65.4,
+        "Sheet":  "Data",
+        "Rows":  55,
+        "Cols":  126,
+        "Headers":  "Zone | Name | RefCode | HeaderId | ParentId | Program | AA | BB | Good Value | New Repertoire | Premium Full-Bodied | Premium Modern Light | Total | SM32 | BIX | SB6 | TP",
+        "Sample":  " |  |  |  |  |  | Target | Revised | Gap | %Gap | Target | Revised | Gap | %Gap | Target | Revised | Gap | %Gap | Target | Revised"
+    },
+    {
+        "Category":  "thang 9 Target South 2",
+        "FileName":  "Sub DistributorTarget-202609-[South 2]_A.xlsx",
+        "SizeKB":  11825.1,
+        "Sheet":  "Data",
+        "Rows":  54,
+        "Cols":  90,
+        "Headers":  "Zone | Name | RefCode | HeaderId | ParentId | Program | Total | BIX | SB6 | TP | H025 | TS | SD6 | BXB | HP | TC25 | TS25",
+        "Sample":  " |  |  |  |  |  | Target | Revised | Gap | %Gap | Target | Revised | Gap | %Gap | Target | Revised | Gap | %Gap | Target | Revised"
+    },
+    {
+        "Category":  "thang 9 Target South 2",
+        "FileName":  "Sub DistributorTarget-202609-[South 2]_A.xlsx",
+        "SizeKB":  11825.1,
+        "Sheet":  "Sheet1",
+        "Rows":  1048525,
+        "Cols":  16382,
+        "Headers":  "Zone | Name | RefCode | Program | Total | BIX | SB6 | TP | H025 | TS | SD6 | BXB | HP | TC25 | TS25 | L35",
+        "Sample":  " |  |  |  | Target | Revised | Gap | %Gap | Target | Revised | Gap | %Gap | Target | Revised | Gap | %Gap | Target | Revised | Gap | %Gap"
+    },
+    {
+        "Category":  "thang 9 Target South 2",
+        "FileName":  "Sub DistributorTarget-202609-[South 2]_A.xlsx",
+        "SizeKB":  11825.1,
+        "Sheet":  "Sheet2",
+        "Rows":  21,
+        "Cols":  3,
+        "Headers":  "Total | Target | 10953",
+        "Sample":  "BIX | Target | 1"
+    },
+    {
+        "Category":  "thang 9 Target South 9",
+        "FileName":  "Sub DistributorTarget-202609-[South 9]_F.xlsx",
+        "SizeKB":  92.8,
+        "Sheet":  "Data",
+        "Rows":  54,
+        "Cols":  130,
+        "Headers":  "Zone | RefCode | HeaderId | ParentId | AA | BB | Good Value | New Repertoire | Premium Full-Bodied | Premium Modern Light | Total | SM32 | TD | BIX | SB6",
+        "Sample":  " | Name |  |  |  | Program | Target | Revised | Gap | %Gap | Target | Revised | Gap | %Gap | Target | Revised | Gap | %Gap | Target | Revised"
+    }
+]

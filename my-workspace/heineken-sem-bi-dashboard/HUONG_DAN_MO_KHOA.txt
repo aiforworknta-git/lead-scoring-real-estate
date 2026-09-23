@@ -1,0 +1,27 @@
+===================================================================
+HEINEKEN VIETNAM - EXECUTIVE BI DASHBOARD (MEKONG DELTA)
+BÁO CÁO PHÂN TÍCH THỊ PHẦN & TỐI ƯU DANH MỤC SẢN PHẨM SEM
+(PHIÊN BẢN NÂNG CẤP: CHUẨN HÓA THỊ PHẦN 100% & HIGHLIGHT DỊ THƯỜNG)
+===================================================================
+
+MẬT KHẨU MỞ FILE / GIẢI NÉN (PASSWORD): Nguyea16
+
+CÁCH SỬ DỤNG:
+1. Mở trực tiếp file "SEM - Analyst.html" (hoặc "index.html") trên bất kỳ trình duyệt web nào (Google Chrome, Microsoft Edge, Safari, Firefox).
+2. Nhập mật khẩu: Nguyea16 và nhấn nút "MỞ KHÓA BÁO CÁO".
+3. Toàn bộ Dashboard điều hành tương tác sẽ được giải mã trực tiếp và hiển thị đầy đủ, mượt mà.
+4. File "index_unprotected.html" là bản sao lưu mở trực tiếp không cần mật khẩu (dành cho quản trị viên/analyst nội bộ).
+
+ĐIỂM NÂNG CẤP MỚI TRÊN BẢN CẬP NHẬT NÀY:
+1. Chuẩn hóa logic Thị phần (Market Share %):
+   - Đã sửa triệt để lỗi hiển thị > 100% khi lọc Khu vực (South 2) hoặc Quý (Q2-2026).
+   - Bổ sung nút chuyển đổi linh hoạt tại Tab 2 (Top 5):
+     + [% SOM (Toàn Ngành)]: Tỷ lệ % sản phẩm chiếm trên tổng dung lượng toàn thị trường khu vực (Mẫu số = Toàn bộ thị trường).
+     + [% Tỷ Trọng Danh Mục (100% Nội Bộ)]: Tỷ lệ % chiếm trong 100% tổng sản lượng của chính HVN hoặc Đối thủ tại khu vực đó.
+2. Highlight ca bất thường tăng đột biến (Monthly Surges & Outliers):
+   - Thêm Banner cảnh báo trực tiếp tại Tab 1 (Overview).
+   - Đánh dấu Annotations trên Biểu đồ xu hướng tháng (Tháng 2 Đỉnh Tết, Tháng 4 Kỷ lục HVN 78.1%).
+   - Bổ sung Bảng kiểm toán Bất thường 5 tại Tab 4 (Data Audit) liệt kê Top 10 tiệm tạp hóa tăng vọt từ 20-50 thùng lên 280,000-370,000 thùng/tháng và Top Khu vực biến động để phục vụ đối soát ERP/DMS.
+
+TÀI LIỆU MẬT NỘI BỘ - VUI LÒNG KHÔNG CHIA SẺ RA NGOÀI DOANH NGHIỆP.
+===================================================================

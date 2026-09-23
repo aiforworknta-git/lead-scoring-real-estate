@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project_id": "AI4A-ORCHESTRATION-PROJECT",
+  "created_at": "2026-09-13T16:00:00Z",
+  "lead_agent": "ai4a-orchestrator",
+  "status": "INITIALIZED",
+  "pipeline_mode": "FULL_STACK",
+  "current_step_index": 0,
+  "contract": {
+    "objective": "{{objective_description}}",
+    "raw_input_path": "{{raw_input_path}}",
+    "final_output_dir": "outputs/",
+    "acceptance_criteria": [
+      "Zero Discrepancy Reconciliation (sai số = 0.00%)",
+      "Dashboard file size < 1.5MB (Pre-aggregated)",
+      "100% UTF-8 Vietnamese encoding compliance",
+      "Executive 16:9 Presentation Deck with Action Titles"
+    ]
+  },
+  "execution_steps": [
+    {
+      "step_number": 1,
+      "agent": "ai4a-brainstorm",
+      "role": "Planning & Scope Alignment",
+      "status": "PENDING",
+      "input_files": ["{{raw_input_path}}"],
+      "output_artifacts": ["docs/project-brief.md", "docs/task_manifest.json"],
+      "started_at": null,
+      "completed_at": null,
+      "notes": "Define OIPO and target data dictionary"
+    },
+    {
+      "step_number": 2,
+      "agent": "ai4a-data-cleaner",
+      "role": "Sanitization & Schema Standardization",
+      "status": "PENDING",
+      "input_files": ["{{raw_input_path}}"],
+      "output_artifacts": ["outputs/cleansed/data_cleansed_utf8.json", "outputs/reports/data_cleaning_audit.md"],
+      "started_at": null,
+      "completed_at": null,
+      "notes": "Deduplicate, null handling, zero-division protection"
+    },
+    {
+      "step_number": 3,
+      "agent": "ai4a-dashboard-architect",
+      "role": "Data Mart Modeling & UI Construction",
+      "status": "PENDING",
+      "input_files": ["outputs/cleansed/data_cleansed_utf8.json"],
+      "output_artifacts": ["outputs/cubes/fact_summary.json", "outputs/dashboard/index.html"],
+      "started_at": null,
+      "completed_at": null,
+      "notes": "Pre-aggregation engine (< 1.5MB) + Zalo 30s quick card"
+    },
+    {
+      "step_number": 4,
+      "agent": "ai4a-qa-auditor",
+      "role": "Pre-Release Quality Gatekeeper",
+      "status": "PENDING",
+      "input_files": ["{{raw_input_path}}", "outputs/dashboard/index.html"],
+      "output_artifacts": ["outputs/reports/reconciliation_audit.md"],
+      "started_at": null,
+      "completed_at": null,
+      "notes": "Reconciliation check. If fail, call ai4a-software-engineer"
+    },
+    {
+      "step_number": 5,
+      "agent": "ai4a-ppt-architect",
+      "role": "Executive Presentation & Delivery",
+      "status": "PENDING",
+      "input_files": ["outputs/reports/reconciliation_audit.md", "outputs/dashboard/index.html"],
+      "output_artifacts": ["outputs/presentations/executive_deck.pptx", "outputs/presentations/index.html"],
+      "started_at": null,
+      "completed_at": null,
+      "notes": "16:9 widescreen deck with Action Titles"
+    }
+  ],
+  "audit_trail": {
+    "total_records_input": 0,
+    "total_records_cleansed": 0,
+    "discrepancy_amount": 0.0,
+    "discrepancy_percentage": 0.0,
+    "final_sign_off": "PENDING"
+  }
+}

@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo Cáo & Quản Trị Quỹ Lương Nhân Sự Cấp Cao Y Tế (2024 - 2025)</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN with fallback support -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg-base: #0b0f19;
+      --bg-surface: #111827;
+      --bg-card: #1f293d;
+      --bg-card-hover: #26334d;
+      --border-subtle: #2d3748;
+      --border-focus: #3b82f6;
+      
+      --primary: #0ea5e9;
+      --primary-glow: rgba(14, 165, 233, 0.25);
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.25);
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --purple: #8b5cf6;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1560px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, rgba(31, 41, 61, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(12px);
+    }
+
+    .header-titles h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #38bdf8, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-titles p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(14, 165, 233, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(14, 165, 233, 0.3);
+    }
+
+    .badge-success {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-action {
+      background: var(--primary);
+      color: #041226;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+      background: #38bdf8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+
+    /* KPI GRID */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .kpi-card:hover {
+      border-color: var(--border-focus);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.4);
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+    }
+
+    .kpi-card.accent::before { background: var(--accent); }
+    .kpi-card.warning::before { background: var(--warning); }
+    .kpi-card.purple::before { background: var(--purple); }
+
+    .kpi-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      margin: 8px 0;
+    }
+
+    .kpi-sub {
+      font-size: 13px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .kpi-sub span.highlight {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* CHARTS SECTION */
+    .charts-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 1024px) {
+      .charts-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chart-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .chart-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .chart-canvas-container {
+      position: relative;
+      flex-grow: 1;
+      min-height: 280px;
+      max-height: 340px;
+    }
+
+    /* TABLE SECTION */
+    .table-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .table-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-input {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-main);
+      padding: 8px 14px;
+      font-size: 13px;
+      outline: none;
+      width: 240px;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(17, 24, 39, 0.9);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(45, 55, 72, 0.4);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    tr:hover td {
+      background: var(--bg-card-hover);
+      cursor: pointer;
+    }
+
+    .person-name {
+      font-weight: 700;
+      color: #38bdf8;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .person-title {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-weight: 500;
+    }
+
+    .num-cell {
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    .tag-p3 {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* MODAL FOR EXECUTIVE DETAILS */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(4, 8, 18, 0.75);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 840px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .breakdown-bar {
+      display: flex;
+      height: 12px;
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 14px 0 8px;
+    }
+
+    .bar-p1 { background: #3b82f6; }
+    .bar-p2 { background: #10b981; }
+    .bar-p3 { background: #f59e0b; }
+    .bar-bonus { background: #a855f7; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 13px;
+      padding: 20px 0;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- HEADER -->
+    <header>
+      <div class="header-titles">
+        <h1>
+          <span>🏥</span>
+          HỆ THỐNG QUẢN TRỊ QUỸ LƯƠNG LÃNH ĐẠO Y TẾ
+        </h1>
+        <p>Phân tích Chi phí Đãi ngộ 12 Nhân sự Cấp cao (2024 – 2025) • Chuẩn Mô hình 3P Y Khoa Quốc Tế</p>
+      </div>
+      <div class="header-meta">
+        <span class="badge">📅 24 Tháng Đối Soát</span>
+        <span class="badge badge-success">🛡️ Zero Discrepancy</span>
+        <button class="btn-action" onclick="window.print()">
+          <span>🖨️</span> Xuất Báo Cáo
+        </button>
+      </div>
+    </header>
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Tổng Quỹ Lương 24M (Gross)</div>
+        <div class="kpi-value" id="kpi-total-gross">72.05 Tỷ</div>
+        <div class="kpi-sub">
+          Thực nhận (Net): <span class="highlight" id="kpi-total-net">50.62 Tỷ</span>
+        </div>
+      </div>
+
+      <div class="kpi-card accent">
+        <div class="kpi-label">Doanh Thu Viện Phí Giám Sát</div>
+        <div class="kpi-value" id="kpi-total-rev">3,606.6 Tỷ</div>
+        <div class="kpi-sub">
+          Đòn bẩy ROI: <span class="highlight">50.1 Lần</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Tỷ Lệ Lương / Doanh Thu</div>
+        <div class="kpi-value" style="color: #34d399;" id="kpi-ratio">2.00%</div>
+        <div class="kpi-sub">
+          Ngưỡng chuẩn an toàn: <span class="highlight">1.8% – 2.5%</span>
+        </div>
+      </div>
+
+      <div class="kpi-card warning">
+        <div class="kpi-label">Tỷ Trọng Biến Phí P3</div>
+        <div class="kpi-value" style="color: #fbbf24;" id="kpi-p3-pct">46.5%</div>
+        <div class="kpi-sub">
+          Dựa trên ca mổ & KPI: <span class="highlight">33.49 Tỷ VNĐ</span>
+        </div>
+      </div>
+
+      <div class="kpi-card purple">
+        <div class="kpi-label">Tổng Ca Mổ & Can Thiệp</div>
+        <div class="kpi-value" style="color: #c084fc;" id="kpi-surgeries">4,944 Ca</div>
+        <div class="kpi-sub">
+          Tỷ lệ hài lòng CSAT: <span class="highlight">96.2%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS ROW -->
+    <div class="charts-row">
+      <!-- 24-Month Trend Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">📈 Diễn Biến Quỹ Lương & Doanh Thu Lâm Sàng 24 Tháng</div>
+            <div class="chart-subtitle">So sánh mức chi trả lương thực tế và tương quan tăng trưởng viện phí (2024 - 2025)</div>
+          </div>
+          <span class="badge">YoY +6.45%</span>
+        </div>
+        <div class="chart-canvas-container">
+          <canvas id="timelineChart"></canvas>
+        </div>
+      </div>
+
+      <!-- 3P Structure Donut Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">🥧 Cơ Cấu Quỹ Lương 3P</div>
+            <div class="chart-subtitle">Tỷ trọng Position, Person, Performance & Thưởng</div>
+          </div>
+        </div>
+        <div class="chart-canvas-container">
+          <canvas id="structureChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- SURGERY PRODUCTION & REVENUE CHART -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">📊 Năng Suất Phẫu Thuật & Mức Thu Nhập Bình Quân 12 Lãnh Đạo</div>
+          <div class="chart-subtitle">Phân tích mối tương quan giữa sản lượng ca mổ chuyên sâu và thu nhập thù lao P3</div>
+        </div>
+      </div>
+      <div class="chart-canvas-container" style="min-height: 290px;">
+        <canvas id="surgeonRankingChart"></canvas>
+      </div>
+    </div>
+
+    <!-- TABLE OF 12 EXECUTIVES -->
+    <div class="table-card">
+      <div class="table-header">
+        <div>
+          <div class="chart-title">👥 Bảng Xếp Hạng Đãi Ngộ 12 Nhân Sự Cấp Cao (24 Tháng)</div>
+          <div class="chart-subtitle">Nhấp vào từng nhân sự để xem chi tiết phiếu lương và cơ cấu thu nhập 3P</div>
+        </div>
+        <div class="table-controls">
+          <input type="text" id="searchInput" class="search-input" placeholder="🔍 Tìm kiếm bác sĩ, chức vụ..." onkeyup="filterTable()">
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table id="execTable">
+          <thead>
+            <tr>
+              <th>Mã NV</th>
+              <th>Họ và Tên / Chức Vụ</th>
+              <th>Chuyên Khoa</th>
+              <th>Tổng Gross 24M</th>
+              <th>Lương TB/Tháng</th>
+              <th>Cơ Cấu (P1 / P2 / P3)</th>
+              <th>Ca Mổ 24M</th>
+              <th>Doanh Thu Bảo Trợ</th>
+              <th>ROI (Lần)</th>
+              <th>Thao Tác</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- STRATEGIC TAKEAWAYS -->
+    <div class="charts-row" style="grid-template-columns: 1fr 1fr;">
+      <div class="chart-card" style="border-left: 4px solid var(--warning);">
+        <div class="chart-title" style="color: #fbbf24;">⚠️ 3 Cảnh Báo Chiến Lược Từ Quỹ Lương</div>
+        <div style="font-size: 13.5px; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
+          <div><strong>1. Rủi ro Bác sĩ "Ngôi sao" (Key-Man Dependency):</strong> Top 3 phẫu thuật viên (Tim mạch, Can thiệp, Sản IVF) chiếm 35% ca mổ viện. Cần ràng buộc cam kết 3-5 năm kèm cổ phần ảo.</div>
+          <div><strong>2. Gánh nặng Thuế TNCN lũy tiến (35%):</strong> Lãnh đạo cấp cao chịu mức thuế biên tối đa, tổng nộp 21.15 Tỷ VNĐ. Cần chuyển dịch 15-20% thành phúc lợi phi tiền mặt.</div>
+          <div><strong>3. Chốt chặn An toàn Y tế:</strong> Tuyệt đối duy trì điều khoản phạt 100% P3 nếu có sai sót chuyên môn nghiêm trọng để cân bằng y đức và doanh thu.</div>
+        </div>
+      </div>
+
+      <div class="chart-card" style="border-left: 4px solid var(--accent);">
+        <div class="chart-title" style="color: #34d399;">💡 4 Kiến Nghị Trọng Tâm Cho Ban Giám Đốc</div>
+        <div style="font-size: 13.5px; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
+          <div><strong>1. Gói Đãi Ngộ Giữ Chân Bác Sĩ Cốt Cán:</strong> Cấp quỹ nghiên cứu khoa học, tài trợ Fellowship quốc tế và chính sách Phantom Stock.</div>
+          <div><strong>2. Tối Ưu Hóa Gói Phúc Lợi Phi Tiền Mặt:</strong> Tài trợ xe công vụ, nhà ở chuyên gia, bảo hiểm trách nhiệm y khoa quốc tế.</div>
+          <div><strong>3. Số Hóa Đối Soát HIS/EMR Real-time:</strong> Bỏ ký giấy thủ công, tự động hóa tính thù lao phẫu thuật theo biên bản mổ điện tử.</div>
+          <div><strong>4. Thành Lập Hội Đồng Thẩm Định Chỉ Định Mổ:</strong> Kiểm tra chéo ngẫu nhiên 5% bệnh án để bảo vệ an toàn tối thượng cho người bệnh.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div>Bản quyền © 2026 Hệ Thống Bệnh Viện Đa Khoa Quốc Tế • Phòng Quản Trị Nhân Sự & Kế Hoạch Tài Chính</div>
+      <div>Khung thiết kế: <strong>ai4a:brainstorm --oipo</strong> • Dữ liệu đối soát 100% khớp bảng lương</div>
+    </footer>
+
+  </div>
+
+  <!-- EXECUTIVE DETAIL MODAL -->
+  <div class="modal-backdrop" id="execModal" onclick="closeModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="document.getElementById('execModal').style.display='none'">✕</button>
+      <div id="modalContent">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Embedded Data from payroll_analytics_summary.json
+    const analyticsData = {
+      macro: {
+        total_payroll_24m: 72053654215,
+        total_payroll_net_24m: 50620929577,
+        total_revenue_clinical_24m: 3606622552078,
+        total_surgeries_24m: 4944,
+        overall_payroll_to_revenue_pct: 2.0,
+        structure: { p1_pct: 34.0, p2_pct: 13.6, p3_pct: 46.5, bonus_pct: 5.9 }
+      },
+      executives: [
+        { exec_id: "EXEC01", name: "Trần Văn Hùng", title: "GS.TS.BS", position: "Giám Đốc Bệnh Viện (CEO / CMO)", department: "Ban Điều Hành", totalGross: 7943187378, avgGrossPerMonth: 330966141, totalP1: 2980800000, totalP2: 1242000000, totalP3: 3192537378, totalBonus: 527850000, totalNet: 5556124972, totalRevenue: 685905280763, totalSurgeries: 491, p1Ratio: 37.5, p2Ratio: 15.6, p3Ratio: 40.2, roiRatio: 86.4 },
+        { exec_id: "EXEC04", name: "Vũ Hoài An", title: "TS.BS.CKII", position: "Trưởng Khoa Phẫu Thuật Tim Mạch", department: "Khoa Ngoại Tim Mạch", totalGross: 7214909673, avgGrossPerMonth: 300621236, totalP1: 1987200000, totalP2: 869400000, totalP3: 4001234673, totalBonus: 357075000, totalNet: 5053613355, totalRevenue: 178472215972, totalSurgeries: 585, p1Ratio: 27.5, p2Ratio: 12.1, p3Ratio: 55.5, roiRatio: 24.7 },
+        { exec_id: "EXEC03", name: "Nguyễn Hoàng Nam", title: "TS.BS.CKII", position: "Phó Giám Đốc Khối Ngoại", department: "Khối Ngoại & Gây Mê", totalGross: 7131177607, avgGrossPerMonth: 297132400, totalP1: 2235600000, totalP2: 993600000, totalP3: 3498327607, totalBonus: 403650000, totalNet: 4995838229, totalRevenue: 327123579111, totalSurgeries: 518, p1Ratio: 31.3, p2Ratio: 13.9, p3Ratio: 49.1, roiRatio: 45.9 },
+        { exec_id: "EXEC05", name: "Đỗ Hoàng Long", title: "BSCKII", position: "Trưởng Khoa Can Thiệp Tim Mạch", department: "Khoa Tim Mạch Can Thiệp", totalGross: 6586462704, avgGrossPerMonth: 274435946, totalP1: 1863000000, totalP2: 745200000, totalP3: 3652237704, totalBonus: 326025000, totalNet: 4619984945, totalRevenue: 159453709435, totalSurgeries: 521, p1Ratio: 28.3, p2Ratio: 11.3, p3Ratio: 55.5, roiRatio: 24.2 },
+        { exec_id: "EXEC02", name: "Lê Thị Mai Hoa", title: "PGS.TS.BS", position: "Phó Giám Đốc Khối Nội", department: "Khối Nội & Nhi", totalGross: 6429133074, avgGrossPerMonth: 267880545, totalP1: 2235600000, totalP2: 1117800000, totalP3: 2656558074, totalBonus: 419175000, totalNet: 4511427503, totalRevenue: 234399162245, totalSurgeries: 386, p1Ratio: 34.8, p2Ratio: 17.4, p3Ratio: 41.3, roiRatio: 36.5 },
+        { exec_id: "EXEC07", name: "Đặng Thị Cẩm Tú", title: "BSCKII", position: "Trưởng Khoa Phụ Sản & IVF", department: "Khoa Phụ Sản - IVF", totalGross: 6338662381, avgGrossPerMonth: 264110933, totalP1: 1863000000, totalP2: 745200000, totalP3: 3404437381, totalBonus: 326025000, totalNet: 4449002724, totalRevenue: 168049464366, totalSurgeries: 511, p1Ratio: 29.4, p2Ratio: 11.8, p3Ratio: 53.7, roiRatio: 26.5 },
+        { exec_id: "EXEC08", name: "Bùi Quang Vinh", title: "TS.BS.CKII", position: "Trưởng Khoa Chấn Thương Chỉnh Hình", department: "Khoa Chấn Thương", totalGross: 5960130725, avgGrossPerMonth: 248338780, totalP1: 1863000000, totalP2: 745200000, totalP3: 3025905725, totalBonus: 326025000, totalNet: 4187815882, totalRevenue: 140408140446, totalSurgeries: 449, p1Ratio: 31.3, p2Ratio: 12.5, p3Ratio: 50.8, roiRatio: 23.6 },
+        { exec_id: "EXEC06", name: "Phạm Đức Minh", title: "ThS.BS.CKII", position: "Trưởng Khoa Cấp Cứu & ICU", department: "Khoa ICU & Cấp Cứu", totalGross: 5475273675, avgGrossPerMonth: 228136403, totalP1: 1863000000, totalP2: 745200000, totalP3: 2541048675, totalBonus: 326025000, totalNet: 3853264518, totalRevenue: 113011141861, totalSurgeries: 379, p1Ratio: 34.0, p2Ratio: 13.6, p3Ratio: 46.4, roiRatio: 20.6 },
+        { exec_id: "EXEC09", name: "Nguyễn Thu Trang", title: "ThS.BS.CKI", position: "Trưởng Khoa Gây Mê Hồi Sức", department: "Khoa Gây Mê", totalGross: 5041515628, avgGrossPerMonth: 210063151, totalP1: 1738800000, totalP2: 621000000, totalP3: 2386740628, totalBonus: 294975000, totalNet: 3553971464, totalRevenue: 103718796326, totalSurgeries: 346, p1Ratio: 34.5, p2Ratio: 12.3, p3Ratio: 47.3, roiRatio: 20.6 },
+        { exec_id: "EXEC10", name: "Phan Thanh Tùng", title: "TS.BS", position: "Trưởng Khoa CĐHA & Y Học Hạt Nhân", department: "Khoa CĐHA", totalGross: 4863099016, avgGrossPerMonth: 202629126, totalP1: 1738800000, totalP2: 745200000, totalP3: 2068599016, totalBonus: 310500000, totalNet: 3430864000, totalRevenue: 122263722869, totalSurgeries: 309, p1Ratio: 35.8, p2Ratio: 15.3, p3Ratio: 42.5, roiRatio: 25.1 },
+        { exec_id: "EXEC11", name: "Đỗ Minh Triết", title: "ThS.", position: "Giám Đốc Vận Hành (COO)", department: "Ban Điều Hành", totalGross: 4659576482, avgGrossPerMonth: 194149020, totalP1: 2111400000, totalP2: 621000000, totalP3: 1585626482, totalBonus: 341550000, totalNet: 3290433454, totalRevenue: 689035480350, totalSurgeries: 237, p1Ratio: 45.3, p2Ratio: 13.3, p3Ratio: 34.0, roiRatio: 147.9 },
+        { exec_id: "EXEC12", name: "Hoàng Yến Nhi", title: "ThS. CPA", position: "Giám Đốc Tài Chính (CFO)", department: "Ban Điều Hành", totalGross: 4410525872, avgGrossPerMonth: 183771911, totalP1: 1987200000, totalP2: 621000000, totalP3: 1476300872, totalBonus: 326025000, totalNet: 3118588531, totalRevenue: 684781858334, totalSurgeries: 212, p1Ratio: 45.1, p2Ratio: 14.1, p3Ratio: 33.5, roiRatio: 155.3 }
+      ],
+      months: [
+        { id: "2024-01", gross: 4916, p3: 1466, rev: 152.0 },
+        { id: "2024-02", gross: 2797, p3: 1417, rev: 151.1 },
+        { id: "2024-03", gross: 2622, p3: 1242, rev: 134.5 },
+        { id: "2024-04", gross: 2603, p3: 1223, rev: 132.7 },
+        { id: "2024-05", gross: 2627, p3: 1247, rev: 132.8 },
+        { id: "2024-06", gross: 2735, p3: 1355, rev: 142.6 },
+        { id: "2024-07", gross: 2735, p3: 1355, rev: 143.1 },
+        { id: "2024-08", gross: 2797, p3: 1417, rev: 142.1 },
+        { id: "2024-09", gross: 2653, p3: 1273, rev: 132.6 },
+        { id: "2024-10", gross: 2690, p3: 1310, rev: 133.5 },
+        { id: "2024-11", gross: 2837, p3: 1457, rev: 149.5 },
+        { id: "2024-12", gross: 2889, p3: 1509, rev: 154.1 },
+        { id: "2025-01", gross: 5173, p3: 1481, rev: 171.5 },
+        { id: "2025-02", gross: 2977, p3: 1500, rev: 172.4 },
+        { id: "2025-03", gross: 2786, p3: 1309, rev: 147.5 },
+        { id: "2025-04", gross: 2840, p3: 1363, rev: 149.7 },
+        { id: "2025-05", gross: 2895, p3: 1418, rev: 146.4 },
+        { id: "2025-06", gross: 2922, p3: 1445, rev: 159.8 },
+        { id: "2025-07", gross: 2926, p3: 1450, rev: 158.0 },
+        { id: "2025-08", gross: 2850, p3: 1373, rev: 162.6 },
+        { id: "2025-09", gross: 2831, p3: 1355, rev: 148.8 },
+        { id: "2025-10", gross: 2881, p3: 1404, rev: 146.4 },
+        { id: "2025-11", gross: 3008, p3: 1531, rev: 169.3 },
+        { id: "2025-12", gross: 3064, p3: 1588, rev: 173.5 }
+      ]
+    };
+
+    function formatVND(val) {
+      return (val / 1e9).toFixed(2) + ' Tỷ';
+    }
+
+    function formatMillion(val) {
+      return (val / 1e6).toFixed(1) + ' Tr';
+    }
+
+    // Render Table
+    function renderTable(list) {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+      list.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.onclick = () => showModal(item.exec_id);
+        tr.innerHTML = `
+          <td><span class="badge" style="font-family: var(--font-mono);">${item.exec_id}</span></td>
+          <td>
+            <div class="person-name">
+              ${item.name}
+              <span class="person-title">${item.title} • ${item.position}</span>
+            </div>
+          </td>
+          <td><span style="color: var(--text-muted);">${item.department}</span></td>
+          <td class="num-cell" style="color: #38bdf8;">${formatVND(item.totalGross)}</td>
+          <td class="num-cell">${formatMillion(item.avgGrossPerMonth)}</td>
+          <td>
+            <span class="tag-p3">${item.p3Ratio}% P3</span>
+            <span style="font-size: 11px; color: var(--text-dim); margin-left: 4px;">(${item.p1Ratio}% / ${item.p2Ratio}%)</span>
+          </td>
+          <td class="num-cell" style="color: #c084fc;">${item.totalSurgeries} ca</td>
+          <td class="num-cell" style="color: #34d399;">${formatVND(item.totalRevenue)}</td>
+          <td><span class="badge badge-success">${item.roiRatio}x</span></td>
+          <td><button class="btn-action" style="padding: 4px 10px; font-size: 11px;" onclick="event.stopPropagation(); showModal('${item.exec_id}')">Chi tiết</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Filter Table
+    function filterTable() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = analyticsData.executives.filter(x => 
+        x.name.toLowerCase().includes(q) || 
+        x.position.toLowerCase().includes(q) || 
+        x.department.toLowerCase().includes(q) ||
+        x.exec_id.toLowerCase().includes(q)
+      );
+      renderTable(filtered);
+    }
+
+    // Show Detail Modal
+    function showModal(id) {
+      const exec = analyticsData.executives.find(x => x.exec_id === id);
+      if (!exec) return;
+      const content = document.getElementById('modalContent');
+      content.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+          <div>
+            <div style="font-size: 12px; color: var(--primary); font-weight: 700; text-transform: uppercase;">MÃ NHÂN SỰ: ${exec.exec_id} • ${exec.department}</div>
+            <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin: 4px 0;">${exec.title} ${exec.name}</h2>
+            <div style="color: var(--text-muted); font-size: 14px;">${exec.position}</div>
+          </div>
+          <span class="badge badge-success" style="font-size: 14px; padding: 8px 16px;">ROI: ${exec.roiRatio} Lần</span>
+        </div>
+
+        <div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+          <div class="kpi-card">
+            <div class="kpi-label">Tổng Gross 24M</div>
+            <div class="kpi-value" style="font-size: 20px; color: #38bdf8;">${formatVND(exec.totalGross)}</div>
+            <div class="kpi-sub">Thực nhận Net: ${formatVND(exec.totalNet)}</div>
+          </div>
+          <div class="kpi-card warning">
+            <div class="kpi-label">Tổng Ca Mổ Đảm Nhận</div>
+            <div class="kpi-value" style="font-size: 20px; color: #fbbf24;">${exec.totalSurgeries} Ca</div>
+            <div class="kpi-sub">Bình quân: ${(exec.totalSurgeries / 24).toFixed(1)} ca/tháng</div>
+          </div>
+          <div class="kpi-card accent">
+            <div class="kpi-label">Doanh Thu Viện Phí</div>
+            <div class="kpi-value" style="font-size: 20px; color: #34d399;">${formatVND(exec.totalRevenue)}</div>
+            <div class="kpi-sub">Lương chiếm: ${((exec.totalGross / exec.totalRevenue) * 100).toFixed(2)}% DT</div>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 18px; margin-bottom: 20px;">
+          <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px;">Cơ Cấu Thu Nhập 3P Chi Tiết</div>
+          <div class="breakdown-bar">
+            <div class="bar-p1" style="width: ${exec.p1Ratio}%;" title="P1 (Vị trí): ${exec.p1Ratio}%"></div>
+            <div class="bar-p2" style="width: ${exec.p2Ratio}%;" title="P2 (Học vị): ${exec.p2Ratio}%"></div>
+            <div class="bar-p3" style="width: ${exec.p3Ratio}%;" title="P3 (Ca mổ & KPI): ${exec.p3Ratio}%"></div>
+            <div class="bar-bonus" style="width: ${(100 - exec.p1Ratio - exec.p2Ratio - exec.p3Ratio).toFixed(1)}%;" title="Thưởng Tết"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); flex-wrap: wrap; gap: 8px;">
+            <div><span style="color: #3b82f6;">●</span> P1 (Vị trí): <strong>${formatVND(exec.totalP1)}</strong> (${exec.p1Ratio}%)</div>
+            <div><span style="color: #10b981;">●</span> P2 (Học vị): <strong>${formatVND(exec.totalP2)}</strong> (${exec.p2Ratio}%)</div>
+            <div><span style="color: #f59e0b;">●</span> P3 (Ca mổ): <strong>${formatVND(exec.totalP3)}</strong> (${exec.p3Ratio}%)</div>
+            <div><span style="color: #a855f7;">●</span> Thưởng Tết: <strong>${formatVND(exec.totalBonus)}</strong></div>
+          </div>
+        </div>
+
+        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.6;">
+          <strong>Nhận xét chuyên môn:</strong> Bác sĩ thuộc nhóm chủ lực chuyên môn cao. Tỷ trọng P3 đạt <strong>${exec.p3Ratio}%</strong> phản ánh tính biến phí cao theo năng suất phẫu thuật thực tế, hạn chế rủi ro chi phí cố định cho bệnh viện. Đạt yêu cầu chốt chặn 0 tai biến y khoa nghiêm trọng.
+        </div>
+      `;
+      document.getElementById('execModal').style.display = 'flex';
+    }
+
+    function closeModal(e) {
+      if (e.target.id === 'execModal') {
+        document.getElementById('execModal').style.display = 'none';
+      }
+    }
+
+    // Initialize Charts
+    function initCharts() {
+      // 1. Timeline Chart
+      const ctxTimeline = document.getElementById('timelineChart').getContext('2d');
+      new Chart(ctxTimeline, {
+        type: 'line',
+        data: {
+          labels: analyticsData.months.map(m => m.id),
+          datasets: [
+            {
+              label: 'Tổng Quỹ Lương Gross (Triệu VNĐ)',
+              data: analyticsData.months.map(m => m.gross),
+              borderColor: '#0ea5e9',
+              backgroundColor: 'rgba(14, 165, 233, 0.1)',
+              borderWidth: 2.5,
+              fill: true,
+              tension: 0.35,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Thù Lao Ca Mổ P3 (Triệu VNĐ)',
+              data: analyticsData.months.map(m => m.p3),
+              borderColor: '#f59e0b',
+              borderWidth: 2,
+              borderDash: [4, 4],
+              pointRadius: 2,
+              tension: 0.35,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Doanh Thu Viện Phí (Tỷ VNĐ)',
+              data: analyticsData.months.map(m => m.rev),
+              borderColor: '#10b981',
+              borderWidth: 2,
+              pointRadius: 3,
+              tension: 0.35,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 11 } } },
+            tooltip: { backgroundColor: '#1e293b', titleColor: '#fff', bodyColor: '#cbd5e1' }
+          },
+          scales: {
+            x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b', font: { size: 10 } } },
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              grid: { color: 'rgba(51, 65, 85, 0.3)' },
+              ticks: { color: '#94a3b8' },
+              title: { display: true, text: 'Lương Gross / P3 (Triệu VNĐ)', color: '#64748b' }
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              grid: { drawOnChartArea: false },
+              ticks: { color: '#34d399' },
+              title: { display: true, text: 'Doanh Thu (Tỷ VNĐ)', color: '#34d399' }
+            }
+          }
+        }
+      });
+
+      // 2. 3P Structure Donut Chart
+      const ctxStructure = document.getElementById('structureChart').getContext('2d');
+      new Chart(ctxStructure, {
+        type: 'doughnut',
+        data: {
+          labels: ['P1 (Vị Trí)', 'P2 (Học Vị/Đãi Ngộ)', 'P3 (Ca Mổ & KPI)', 'Thưởng Tết/Năm'],
+          datasets: [{
+            data: [34.0, 13.6, 46.5, 5.9],
+            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#a855f7'],
+            borderColor: '#111827',
+            borderWidth: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '68%',
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 } } }
+          }
+        }
+      });
+
+      // 3. Surgeon Ranking Bar Chart
+      const ctxRanking = document.getElementById('surgeonRankingChart').getContext('2d');
+      new Chart(ctxRanking, {
+        type: 'bar',
+        data: {
+          labels: analyticsData.executives.map(e => e.name),
+          datasets: [
+            {
+              label: 'Số Ca Phẫu Thuật 24M (Ca)',
+              data: analyticsData.executives.map(e => e.totalSurgeries),
+              backgroundColor: 'rgba(192, 132, 252, 0.7)',
+              borderColor: '#c084fc',
+              borderWidth: 1,
+              borderRadius: 6,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Lương Gross TB/Tháng (Triệu VNĐ)',
+              data: analyticsData.executives.map(e => (e.avgGrossPerMonth / 1e6).toFixed(1)),
+              backgroundColor: 'rgba(14, 165, 233, 0.7)',
+              borderColor: '#0ea5e9',
+              borderWidth: 1,
+              borderRadius: 6,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+            tooltip: { backgroundColor: '#1e293b' }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 11 } } },
+            y: {
+              type: 'linear',
+              position: 'left',
+              grid: { color: 'rgba(51, 65, 85, 0.3)' },
+              ticks: { color: '#c084fc' },
+              title: { display: true, text: 'Số Ca Mổ (Ca)', color: '#c084fc' }
+            },
+            y1: {
+              type: 'linear',
+              position: 'right',
+              grid: { drawOnChartArea: false },
+              ticks: { color: '#38bdf8' },
+              title: { display: true, text: 'Lương TB (Triệu VNĐ)', color: '#38bdf8' }
+            }
+          }
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderTable(analyticsData.executives);
+      initCharts();
+    });
+  </script>
+</body>
+</html>

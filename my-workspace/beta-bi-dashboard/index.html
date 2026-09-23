@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BETA SOLUTIONS - Executive Financial BI Dashboard</title>
+  
+  <!-- Modern Google Fonts: Outfit & Roboto (Compliant with Brand Guideline) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- ApexCharts (Offline first with CDN Fallback) -->
+  <script src="apexcharts.min.js"></script>
+  <script>
+    if (typeof ApexCharts === 'undefined') {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/apexcharts"><\/script>');
+    }
+  </script>
+
+  <style>
+    /* ==========================================================================
+       1. BRAND GUIDELINE BETA SOLUTIONS TOKENS (STRICT ENFORCEMENT)
+       Primary Colors:
+         - Tím Hoàng Gia (Ngân Sách Được Duyệt): #7C3AED
+         - Xanh Ngọc (Chi Tiêu Thực Tế): #06B6D4
+       Secondary Colors:
+         - Hồng San Hô (Cảnh Báo / Vượt Ngân Sách): #F43F5E
+         - Xanh Bạc Hà (Tiết Kiệm / Hiệu Quả): #14B8A6
+       Dark Luxe Base:
+         - Nền xám đậm sang trọng: #1E1E2E & Đen mờ: #0D0E15
+       ========================================================================== */
+    :root {
+      /* Strict Brand Guideline Palette */
+      --brand-royal-purple: #7C3AED;       /* Tím Hoàng Gia - Ngân sách được duyệt */
+      --brand-purple-glow: 0 0 16px rgba(124, 58, 237, 0.55);
+      --brand-purple-tint: rgba(124, 58, 237, 0.15);
+
+      --brand-cyan-teal: #06B6D4;          /* Xanh Ngọc - Chi tiêu thực tế */
+      --brand-cyan-glow: 0 0 16px rgba(6, 182, 212, 0.55);
+      --brand-cyan-tint: rgba(6, 182, 212, 0.15);
+
+      --brand-coral-rose: #F43F5E;         /* Hồng San Hô - Vượt ngân sách / Cảnh báo */
+      --brand-coral-glow: 0 0 16px rgba(244, 63, 94, 0.6);
+      --brand-coral-tint: rgba(244, 63, 94, 0.18);
+
+      --brand-mint-green: #14B8A6;         /* Xanh Bạc Hà - Tiết kiệm / Hiệu quả */
+      --brand-mint-glow: 0 0 16px rgba(20, 184, 166, 0.55);
+      --brand-mint-tint: rgba(20, 184, 166, 0.15);
+
+      /* Dark Luxe Backgrounds */
+      --bg-deep: #0D0E15;
+      --bg-surface: #1E1E2E;
+      --bg-card: rgba(30, 30, 46, 0.75);
+      --bg-card-hover: rgba(40, 40, 62, 0.9);
+
+      /* Glassmorphism Tokens */
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-border-hover: rgba(124, 58, 237, 0.4);
+      --glass-blur: blur(16px);
+      --glass-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.5);
+
+      /* Typography */
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --font-heading: 'Outfit', -apple-system, sans-serif;
+      --font-body: 'Roboto', 'Segoe UI', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      padding-bottom: 60px;
+    }
+
+    /* Ambient Brand Aura Glow Backdrop (Tím Hoàng Gia & Xanh Ngọc) */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -15%;
+      left: -10%;
+      width: 55vw;
+      height: 55vw;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, rgba(13, 14, 21, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -20%;
+      right: -10%;
+      width: 55vw;
+      height: 55vw;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, rgba(13, 14, 21, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ambient-center {
+      position: fixed;
+      top: 35%;
+      right: 25%;
+      width: 45vw;
+      height: 45vw;
+      background: radial-gradient(circle, rgba(20, 184, 166, 0.05) 0%, rgba(13, 14, 21, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .dashboard-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 24px 32px;
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: var(--bg-card);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      box-shadow: var(--glass-shadow);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-panel:hover {
+      border-color: var(--glass-border-hover);
+      box-shadow: var(--glass-shadow), 0 0 25px rgba(124, 58, 237, 0.2);
+    }
+
+    /* ==========================================================================
+       2. HEADER SECTION
+       ========================================================================== */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px;
+      margin-bottom: 24px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #7C3AED 0%, #06B6D4 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 22px;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+    }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #FFFFFF 0%, #E2E8F0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .role-badge {
+      background: var(--brand-purple-tint);
+      border: 1px solid rgba(124, 58, 237, 0.35);
+      color: #A78BFA;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .role-badge.cyan {
+      background: var(--brand-cyan-tint);
+      border-color: rgba(6, 182, 212, 0.35);
+      color: #22D3EE;
+    }
+
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: rgba(13, 14, 21, 0.8);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--brand-mint-green);
+      box-shadow: 0 0 10px var(--brand-mint-green);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(20, 184, 166, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(20, 184, 166, 0); }
+    }
+
+    .btn-action {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-action:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* ==========================================================================
+       3. SLICER BAR (INTERACTIVE QUARTER & DEPARTMENT FILTER BUTTONS)
+       ========================================================================== */
+    .filter-panel {
+      padding: 18px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      min-width: 120px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    .filter-btn {
+      background: rgba(20, 20, 32, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      user-select: none;
+    }
+
+    .filter-btn:hover {
+      color: var(--text-primary);
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(45, 45, 68, 0.8);
+      transform: translateY(-1px);
+    }
+
+    /* Active Glowing Button (Styled in Brand Royal Purple #7C3AED) */
+    .filter-btn.active {
+      color: #FFFFFF !important;
+      font-weight: 700;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.4) 0%, rgba(6, 182, 212, 0.4) 100%) !important;
+      border-color: #7C3AED !important;
+      box-shadow: 0 0 16px rgba(124, 58, 237, 0.55), inset 0 0 8px rgba(124, 58, 237, 0.25) !important;
+      transform: scale(1.03);
+    }
+
+    .filter-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 3px;
+      border-radius: 3px;
+      background: #7C3AED;
+      box-shadow: 0 0 8px #7C3AED;
+    }
+
+    .filter-stats-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .filter-count-badge {
+      color: var(--brand-cyan-teal);
+      font-weight: 700;
+    }
+
+    /* ==========================================================================
+       4. HERO 3 KPI CARDS (STRICT BRAND COLORS)
+       Card 1: Ngân Sách -> Tím Hoàng Gia #7C3AED
+       Card 2: Chi Tiêu  -> Xanh Ngọc #06B6D4
+       Card 3: Vượt NS   -> Hồng San Hô #F43F5E
+       ========================================================================== */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      border-radius: 3px 3px 0 0;
+    }
+
+    /* Card 1: Ngân Sách - Tím Hoàng Gia #7C3AED */
+    .kpi-card.budget::before {
+      background: linear-gradient(90deg, #7C3AED, #A78BFA);
+      box-shadow: var(--brand-purple-glow);
+    }
+
+    /* Card 2: Chi Tiêu - Xanh Ngọc #06B6D4 */
+    .kpi-card.spend::before {
+      background: linear-gradient(90deg, #06B6D4, #22D3EE);
+      box-shadow: var(--brand-cyan-glow);
+    }
+
+    /* Card 3: Vượt Ngân Sách - Hồng San Hô #F43F5E */
+    .kpi-card.overbudget::before {
+      background: linear-gradient(90deg, #F43F5E, #FB7185);
+      box-shadow: var(--brand-coral-glow);
+    }
+
+    /* KPI Header */
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .kpi-title-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .kpi-icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .kpi-card.budget .kpi-icon-box {
+      background: var(--brand-purple-tint);
+      border: 1px solid rgba(124, 58, 237, 0.35);
+      color: #A78BFA;
+    }
+
+    .kpi-card.spend .kpi-icon-box {
+      background: var(--brand-cyan-tint);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      color: #06B6D4;
+    }
+
+    .kpi-card.overbudget .kpi-icon-box {
+      background: var(--brand-coral-tint);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      color: #F43F5E;
+    }
+
+    .kpi-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-sparkline {
+      width: 90px;
+      height: 38px;
+    }
+
+    /* KPI Value */
+    .kpi-value-wrapper {
+      margin: 10px 0 14px 0;
+    }
+
+    .kpi-value {
+      font-family: var(--font-heading);
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: #FFFFFF;
+      line-height: 1.1;
+      display: inline-block;
+    }
+
+    .kpi-subvalue {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* KPI Badges */
+    .kpi-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .kpi-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.4s ease;
+    }
+
+    .badge-pending {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      opacity: 0.6;
+    }
+
+    /* Badge Tím Hoàng Gia #7C3AED */
+    .badge-revealed-purple {
+      background: var(--brand-purple-tint);
+      color: #C4B5FD;
+      border: 1px solid rgba(124, 58, 237, 0.45);
+      box-shadow: var(--brand-purple-glow);
+    }
+
+    /* Badge Xanh Ngọc #06B6D4 */
+    .badge-revealed-cyan {
+      background: var(--brand-cyan-tint);
+      color: #67E8F9;
+      border: 1px solid rgba(6, 182, 212, 0.45);
+      box-shadow: var(--brand-cyan-glow);
+    }
+
+    /* Badge Xanh Bạc Hà #14B8A6 (Tiết kiệm) */
+    .badge-revealed-mint {
+      background: var(--brand-mint-tint);
+      color: #5EEAD4;
+      border: 1px solid rgba(20, 184, 166, 0.45);
+      box-shadow: var(--brand-mint-glow);
+    }
+
+    /* Badge Hồng San Hô #F43F5E (Cảnh báo vượt NS) */
+    .badge-revealed-rose {
+      background: var(--brand-coral-tint);
+      color: #FDA4AF;
+      border: 1px solid rgba(244, 63, 94, 0.45);
+      box-shadow: var(--brand-coral-glow);
+      animation: pulseRose 2s infinite;
+    }
+
+    @keyframes pulseRose {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+
+    /* KPI Progress Track */
+    .kpi-progress-wrapper {
+      margin-top: auto;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .progress-track {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glow-purple {
+      background: linear-gradient(90deg, #7C3AED, #A78BFA);
+      box-shadow: 0 0 10px #7C3AED;
+    }
+
+    .glow-cyan {
+      background: linear-gradient(90deg, #06B6D4, #22D3EE);
+      box-shadow: 0 0 10px #06B6D4;
+    }
+
+    .glow-mint {
+      background: linear-gradient(90deg, #14B8A6, #5EEAD4);
+      box-shadow: 0 0 10px #14B8A6;
+    }
+
+    .glow-rose {
+      background: linear-gradient(90deg, #F43F5E, #FB7185);
+      box-shadow: 0 0 10px #F43F5E;
+    }
+
+    /* ==========================================================================
+       5. CHARTS GRID (CLUSTERED COLUMN + DONUT)
+       ========================================================================== */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .chart-panel {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .chart-title {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chart-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .chart-box {
+      flex: 1;
+      min-height: 360px;
+    }
+
+    /* ==========================================================================
+       6. EXCEPTION & AUDIT TRANSACTION TABLE
+       ========================================================================== */
+    .table-panel {
+      padding: 22px;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(20, 20, 32, 0.8);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      min-width: 260px;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-size: 13px;
+      outline: none;
+      width: 100%;
+    }
+
+    .table-responsive {
+      max-height: 420px;
+      overflow-y: auto;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .table-responsive::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(20, 20, 32, 0.95);
+      position: sticky;
+      top: 0;
+      padding: 12px 14px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      z-index: 2;
+    }
+
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* Table Status Tags (Brand Guideline: Tiet Kiem = Xanh Bac Ha #14B8A6, Vuot NS = Hong San Ho #F43F5E) */
+    .tag-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .tag-tietkiem {
+      background: var(--brand-mint-tint);
+      color: #5EEAD4;
+      border: 1px solid rgba(20, 184, 166, 0.4);
+    }
+
+    .tag-vuotns {
+      background: var(--brand-coral-tint);
+      color: #FDA4AF;
+      border: 1px solid rgba(244, 63, 94, 0.45);
+      box-shadow: 0 0 10px rgba(244, 63, 94, 0.25);
+    }
+
+    /* Toast Notification */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(20, 20, 32, 0.95);
+      border: 1px solid #7C3AED;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(124, 58, 237, 0.35);
+      backdrop-filter: blur(12px);
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      transform: translateY(120px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toast-msg.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        padding: 16px;
+      }
+      .header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .filter-group {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-center"></div>
+
+  <div class="dashboard-container">
+    <!-- 1. Header Bar -->
+    <header class="glass-panel header-bar">
+      <div class="brand-section">
+        <div class="brand-logo">β</div>
+        <div>
+          <h1 class="brand-title">CÔNG TY CỔ PHẦN BETA SOLUTIONS</h1>
+          <div class="brand-subtitle">
+            <span>Executive Financial BI Dashboard</span>
+            <span class="role-badge">Ngân sách: Tím Hoàng Gia (#7C3AED)</span>
+            <span class="role-badge cyan">Chi tiêu: Xanh Ngọc (#06B6D4)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-meta">
+        <div class="sync-status">
+          <span class="pulse-dot"></span>
+          <span>Tự động cập nhật: <b id="sync-timer" style="color: #06B6D4;">2s</b></span>
+          <span style="color: rgba(255,255,255,0.2);">|</span>
+          <span id="last-sync-time">Đang nạp...</span>
+        </div>
+        <button class="btn-action" onclick="toggleFullscreen()">
+          <span>⛶</span> Toàn màn hình
+        </button>
+        <button class="btn-action" onclick="triggerManualReload()">
+          <span>↻</span> Làm mới
+        </button>
+      </div>
+    </header>
+
+    <!-- 2. Slicer Bar: Interactive Quarter & Department Filter Buttons -->
+    <section class="glass-panel filter-panel">
+      <!-- Quarter Filter -->
+      <div class="filter-group">
+        <div class="filter-label">
+          <span>📅</span> Lọc theo Quý:
+        </div>
+        <div class="filter-buttons" id="quarter-buttons">
+          <button class="filter-btn active" data-quarter="ALL" onclick="handleQuarterClick('ALL', this)">Tất cả Quý</button>
+          <button class="filter-btn" data-quarter="Q1-2026" onclick="handleQuarterClick('Q1-2026', this)">Quý 1 (Q1)</button>
+          <button class="filter-btn" data-quarter="Q2-2026" onclick="handleQuarterClick('Q2-2026', this)">Quý 2 (Q2)</button>
+          <button class="filter-btn" data-quarter="Q3-2026" onclick="handleQuarterClick('Q3-2026', this)">Quý 3 (Q3)</button>
+          <button class="filter-btn" data-quarter="Q4-2026" onclick="handleQuarterClick('Q4-2026', this)">Quý 4 (Q4)</button>
+        </div>
+      </div>
+
+      <!-- Department Filter -->
+      <div class="filter-group">
+        <div class="filter-label">
+          <span>🏢</span> Phòng ban:
+        </div>
+        <div class="filter-buttons" id="department-buttons">
+          <button class="filter-btn active" data-dept="ALL" onclick="handleDepartmentClick('ALL', this)">Tất cả Phòng Ban</button>
+          <button class="filter-btn" data-dept="Cong Nghe" onclick="handleDepartmentClick('Cong Nghe', this)">Công Nghệ</button>
+          <button class="filter-btn" data-dept="Ke Toan" onclick="handleDepartmentClick('Ke Toan', this)">Kế Toán</button>
+          <button class="filter-btn" data-dept="Kinh Doanh" onclick="handleDepartmentClick('Kinh Doanh', this)">Kinh Doanh</button>
+          <button class="filter-btn" data-dept="Marketing" onclick="handleDepartmentClick('Marketing', this)">Marketing</button>
+          <button class="filter-btn" data-dept="Nhan Su" onclick="handleDepartmentClick('Nhan Su', this)">Nhân Sự</button>
+          <button class="filter-btn" data-dept="Van Phong" onclick="handleDepartmentClick('Van Phong', this)">Văn Phòng</button>
+        </div>
+      </div>
+
+      <!-- Filter Stats Info Bar -->
+      <div class="filter-stats-bar">
+        <div>
+          <span>Đang hiển thị: </span>
+          <span id="filtered-count" class="filter-count-badge">300</span>
+          <span> / </span>
+          <span id="total-count">300</span>
+          <span> giao dịch hợp lệ</span>
+        </div>
+        <div id="filter-summary-text" style="color: var(--brand-purple-glow); font-weight: 500;">
+          Toàn bộ năm 2026 &bull; Tất cả 6 phòng ban
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Hero 3 KPI Cards -->
+    <section class="kpi-grid">
+      <!-- Card 1: Tổng Ngân Sách - TÍM HOÀNG GIA #7C3AED -->
+      <div class="glass-panel kpi-card budget">
+        <div class="kpi-header">
+          <div class="kpi-title-box">
+            <div class="kpi-icon-box">🏦</div>
+            <div>
+              <div class="kpi-label" style="color: #C4B5FD;">Tổng Ngân Sách Được Duyệt</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Approved Budget (#7C3AED)</div>
+            </div>
+          </div>
+          <div class="kpi-sparkline" id="sparkline-budget"></div>
+        </div>
+
+        <div class="kpi-value-wrapper">
+          <div class="kpi-value counter" id="kpi-budget-val" data-target="0" data-suffix=" Tỷ" data-decimals="2">0.00</div>
+          <div class="kpi-subvalue" id="kpi-budget-exact">0 VNĐ</div>
+        </div>
+
+        <div class="kpi-footer">
+          <div class="kpi-badge badge-pending" id="badge-budget">
+            <span>🛡️</span>
+            <span id="badge-budget-text">Hạn mức phê duyệt 100%</span>
+          </div>
+        </div>
+
+        <div class="kpi-progress-wrapper">
+          <div class="progress-info">
+            <span>Tỷ lệ phân bổ hạn mức</span>
+            <span id="budget-progress-pct" style="color: #A78BFA;">100%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill glow-purple" id="budget-progress-fill" style="width: 100%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Tổng Chi Tiêu Thực Tế - XANH NGỌC #06B6D4 -->
+      <div class="glass-panel kpi-card spend">
+        <div class="kpi-header">
+          <div class="kpi-title-box">
+            <div class="kpi-icon-box">💳</div>
+            <div>
+              <div class="kpi-label" style="color: #67E8F9;">Tổng Chi Tiêu Thực Tế</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Actual Spend (#06B6D4)</div>
+            </div>
+          </div>
+          <div class="kpi-sparkline" id="sparkline-spend"></div>
+        </div>
+
+        <div class="kpi-value-wrapper">
+          <div class="kpi-value counter" id="kpi-spend-val" data-target="0" data-suffix=" Tỷ" data-decimals="2">0.00</div>
+          <div class="kpi-subvalue" id="kpi-spend-exact">0 VNĐ</div>
+        </div>
+
+        <div class="kpi-footer">
+          <div class="kpi-badge badge-pending" id="badge-spend">
+            <span id="badge-spend-icon">●</span>
+            <span id="badge-spend-text">Tỷ lệ sử dụng NS: 0%</span>
+          </div>
+        </div>
+
+        <div class="kpi-progress-wrapper">
+          <div class="progress-info">
+            <span id="spend-usage-label">Mức sử dụng hạn mức</span>
+            <span id="spend-progress-pct" style="color: #06B6D4;">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill glow-cyan" id="spend-progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Giao Dịch Vượt Ngân Sách - HỒNG SAN HÔ #F43F5E -->
+      <div class="glass-panel kpi-card overbudget">
+        <div class="kpi-header">
+          <div class="kpi-title-box">
+            <div class="kpi-icon-box">🚨</div>
+            <div>
+              <div class="kpi-label" style="color: #FDA4AF;">Giao Dịch Vượt Ngân Sách</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Trạng thái "Vuot Ngan Sach" (#F43F5E)</div>
+            </div>
+          </div>
+          <div class="kpi-sparkline" id="sparkline-over"></div>
+        </div>
+
+        <div class="kpi-value-wrapper">
+          <div class="kpi-value counter" id="kpi-over-val" data-target="0" data-suffix=" GD" data-decimals="0">0</div>
+          <div class="kpi-subvalue" id="kpi-over-sub">0 giao dịch cảnh báo đỏ</div>
+        </div>
+
+        <div class="kpi-footer">
+          <div class="kpi-badge badge-pending" id="badge-over">
+            <span>⚠️</span>
+            <span id="badge-over-text">0% trên tổng giao dịch</span>
+          </div>
+        </div>
+
+        <div class="kpi-progress-wrapper">
+          <div class="progress-info">
+            <span>Tỷ lệ giao dịch vượt</span>
+            <span id="over-progress-pct" style="color: #F43F5E;">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill glow-rose" id="over-progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Interactive Charts Grid (Clustered Column + Donut) -->
+    <section class="charts-grid">
+      <!-- Clustered Column Chart: Ngân Sách (#7C3AED) vs Chi Tiêu (#06B6D4) -->
+      <div class="glass-panel chart-panel">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">
+              <span>📊</span>
+              <span id="column-chart-title">So Sánh Ngân Sách Được Duyệt vs Chi Tiêu Thực Tế</span>
+            </div>
+            <div class="chart-desc" id="column-chart-desc">
+              Biểu đồ cột ghép: <b style="color: #7C3AED;">■ Ngân sách (#7C3AED)</b> vs <b style="color: #06B6D4;">■ Chi tiêu (#06B6D4)</b> (Đơn vị: Tỷ VNĐ)
+            </div>
+          </div>
+        </div>
+        <div class="chart-box" id="chart-grouped-column"></div>
+      </div>
+
+      <!-- Donut Chart: Tỷ Trọng Chi Tiêu Theo Phòng Ban (Brand Compliant Palette) -->
+      <div class="glass-panel chart-panel">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">
+              <span>🍩</span>
+              <span>Tỷ Trọng Chi Tiêu Phòng Ban</span>
+            </div>
+            <div class="chart-desc">Cơ cấu chi tiêu thực tế giữa các phòng ban (Brand Colors)</div>
+          </div>
+        </div>
+        <div class="chart-box" id="chart-donut-department"></div>
+      </div>
+    </section>
+
+    <!-- 5. Transaction Audit Table -->
+    <section class="glass-panel table-panel">
+      <div class="table-header">
+        <div>
+          <div class="chart-title">
+            <span>📑</span>
+            <span>Sổ Chi Tiết Giao Dịch Ngân Sách</span>
+          </div>
+          <div class="chart-desc">Dữ liệu thô từ file Excel được lọc tức thì theo bộ lọc đang kích hoạt</div>
+        </div>
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="table-search" placeholder="Tìm kiếm mã GD, phòng ban, hạng mục..." onkeyup="handleTableSearch(this.value)">
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Mã GD</th>
+              <th>Quý</th>
+              <th>Phòng Ban</th>
+              <th>Hạng Mục Chi</th>
+              <th style="text-align: right; color: #C4B5FD;">Ngân Sách Duyệt (VNĐ)</th>
+              <th style="text-align: right; color: #67E8F9;">Chi Tiêu Thực Tế (VNĐ)</th>
+              <th style="text-align: right;">Chênh Lệch (VNĐ)</th>
+              <th style="text-align: center;">Trạng Thái</th>
+            </tr>
+          </thead>
+          <tbody id="transaction-tbody">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-msg" id="toast-box">
+    <span style="font-size: 18px;">⚡</span>
+    <span id="toast-text">File Excel đã được cập nhật! Dashboard vừa refresh tức thì.</span>
+  </div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT: CLIENT-SIDE REACTIVE FILTERING & REALTIME POLLING ENGINE
+       ========================================================================== -->
+  <script>
+    // Global State
+    let rawRecords = [];
+    let currentMtime = 0;
+    let selectedQuarter = 'ALL';
+    let selectedDepartment = 'ALL';
+    let searchQuery = '';
+
+    // Chart Instances
+    let groupedColumnChart = null;
+    let donutDepartmentChart = null;
+    let sparklineBudgetChart = null;
+    let sparklineSpendChart = null;
+    let sparklineOverChart = null;
+
+    // Formatting Helper
+    function formatVND(num) {
+      return (Number(num) || 0).toLocaleString('vi-VN') + ' đ';
+    }
+
+    function formatBillion(num) {
+      return ((Number(num) || 0) / 1e9).toFixed(2);
+    }
+
+    // Modern Counter Animation Engine with EaseOutExpo
+    function animateCounters() {
+      const duration = 1200; // 1.2s smooth animation
+      const easeOutExpo = (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
+      const counters = document.querySelectorAll('.counter');
+
+      counters.forEach((counter) => {
+        const target = parseFloat(counter.getAttribute('data-target')) || 0;
+        const prefix = counter.getAttribute('data-prefix') || '';
+        const suffix = counter.getAttribute('data-suffix') || '';
+        const decimals = parseInt(counter.getAttribute('data-decimals') || '0', 10);
+
+        let startTime = null;
+
+        function step(timestamp) {
+          if (!startTime) startTime = timestamp;
+          const progress = Math.min((timestamp - startTime) / duration, 1);
+          const easedProgress = easeOutExpo(progress);
+          const currentValue = easedProgress * target;
+
+          const formatted = currentValue.toLocaleString('vi-VN', {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals
+          });
+
+          counter.textContent = `${prefix}${formatted}${suffix}`;
+
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          } else {
+            const finalFormatted = target.toLocaleString('vi-VN', {
+              minimumFractionDigits: decimals,
+              maximumFractionDigits: decimals
+            });
+            counter.textContent = `${prefix}${finalFormatted}${suffix}`;
+          }
+        }
+
+        requestAnimationFrame(step);
+      });
+    }
+
+    // ==========================================================================
+    // CLIENT-SIDE FILTERING & AGGREGATION LOGIC
+    // ==========================================================================
+    function getFilteredRecords() {
+      return rawRecords.filter(r => {
+        if (selectedQuarter !== 'ALL' && r.Quy !== selectedQuarter) {
+          return false;
+        }
+        if (selectedDepartment !== 'ALL' && r.Phong_Ban !== selectedDepartment) {
+          return false;
+        }
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const matchId = (r.Ma_Giao_Dich || '').toLowerCase().includes(q);
+          const matchDept = (r.Phong_Ban || '').toLowerCase().includes(q);
+          const matchCat = (r.Hang_Muc_Chi || '').toLowerCase().includes(q);
+          const matchStatus = (r.Trang_Thai || '').toLowerCase().includes(q);
+          if (!matchId && !matchDept && !matchCat && !matchStatus) {
+            return false;
+          }
+        }
+        return true;
+      });
+    }
+
+    function applyFiltersAndUpdateUI() {
+      const filtered = getFilteredRecords();
+
+      // 1. Update counts
+      document.getElementById('filtered-count').textContent = filtered.length;
+      document.getElementById('total-count').textContent = rawRecords.length;
+
+      // Summary label
+      const qText = selectedQuarter === 'ALL' ? 'Tất cả Quý' : selectedQuarter;
+      const dText = selectedDepartment === 'ALL' ? 'Tất cả Phòng Ban' : selectedDepartment;
+      document.getElementById('filter-summary-text').textContent = `${qText} • ${dText}`;
+
+      // 2. Aggregate metrics
+      let totalBudget = 0;
+      let totalSpend = 0;
+      let overBudgetTxnCount = 0;
+      let savingTxnCount = 0;
+
+      filtered.forEach(r => {
+        totalBudget += Number(r.Ngan_Sach_Duyet) || 0;
+        totalSpend += Number(r.Chi_Tieu_Thuc_Te) || 0;
+        if (r.Trang_Thai === 'Vuot Ngan Sach') {
+          overBudgetTxnCount++;
+        } else {
+          savingTxnCount++;
+        }
+      });
+
+      const spendRatio = totalBudget > 0 ? (totalSpend / totalBudget * 100) : 0;
+      const overRatio = filtered.length > 0 ? (overBudgetTxnCount / filtered.length * 100) : 0;
+
+      // 3. Update KPI Card 1: Tổng Ngân Sách (Tím Hoàng Gia #7C3AED)
+      const budgetElem = document.getElementById('kpi-budget-val');
+      budgetElem.setAttribute('data-target', (totalBudget / 1e9).toFixed(2));
+      document.getElementById('kpi-budget-exact').textContent = formatVND(totalBudget);
+      const badgeBudget = document.getElementById('badge-budget');
+      badgeBudget.className = 'kpi-badge badge-revealed-purple';
+      document.getElementById('badge-budget-text').textContent = `${filtered.length} giao dịch được duyệt`;
+
+      // 4. Update KPI Card 2: Tổng Chi Tiêu Thực Tế (Xanh Ngọc #06B6D4)
+      const spendElem = document.getElementById('kpi-spend-val');
+      spendElem.setAttribute('data-target', (totalSpend / 1e9).toFixed(2));
+      document.getElementById('kpi-spend-exact').textContent = formatVND(totalSpend);
+      
+      const badgeSpend = document.getElementById('badge-spend');
+      const badgeSpendIcon = document.getElementById('badge-spend-icon');
+      const badgeSpendText = document.getElementById('badge-spend-text');
+      const spendProgressFill = document.getElementById('spend-progress-fill');
+
+      if (totalSpend <= totalBudget) {
+        // Tiết kiệm: Xanh Bạc Hà #14B8A6 hoặc Xanh Ngọc #06B6D4
+        badgeSpend.className = 'kpi-badge badge-revealed-mint';
+        badgeSpendIcon.textContent = '▲';
+        badgeSpendText.textContent = `Sử dụng ${spendRatio.toFixed(1)}% NS (Tiết kiệm ${(100 - spendRatio).toFixed(1)}%)`;
+        spendProgressFill.className = 'progress-fill glow-cyan';
+      } else {
+        // Vượt ngân sách: Hồng San Hô #F43F5E
+        badgeSpend.className = 'kpi-badge badge-revealed-rose';
+        badgeSpendIcon.textContent = '⚠️';
+        badgeSpendText.textContent = `Vượt ${spendRatio.toFixed(1)}% NS (+${(spendRatio - 100).toFixed(1)}%)`;
+        spendProgressFill.className = 'progress-fill glow-rose';
+      }
+      document.getElementById('spend-progress-pct').textContent = `${spendRatio.toFixed(1)}%`;
+      spendProgressFill.style.width = `${Math.min(spendRatio, 100)}%`;
+
+      // 5. Update KPI Card 3: Giao Dịch Vượt Ngân Sách (Hồng San Hô #F43F5E)
+      const overElem = document.getElementById('kpi-over-val');
+      overElem.setAttribute('data-target', overBudgetTxnCount);
+      document.getElementById('kpi-over-sub').textContent = `${overBudgetTxnCount} GD vượt NS | ${savingTxnCount} GD tiết kiệm`;
+
+      const badgeOver = document.getElementById('badge-over');
+      if (overBudgetTxnCount > 0) {
+        badgeOver.className = 'kpi-badge badge-revealed-rose';
+      } else {
+        badgeOver.className = 'kpi-badge badge-revealed-mint';
+      }
+      document.getElementById('badge-over-text').textContent = `${overRatio.toFixed(1)}% trên tổng giao dịch`;
+      document.getElementById('over-progress-pct').textContent = `${overRatio.toFixed(1)}%`;
+      document.getElementById('over-progress-fill').style.width = `${Math.min(overRatio, 100)}%`;
+
+      // Animate numbers
+      animateCounters();
+
+      // 6. Update Charts with Strict Brand Colors
+      updateGroupedColumnChart(filtered);
+      updateDonutDepartmentChart(filtered);
+      updateSparklines(filtered);
+
+      // 7. Update Table
+      renderTableRows(filtered);
+    }
+
+    // ==========================================================================
+    // CHART RENDERING (STRICT BRAND COLORS)
+    // Ngân sách: Tím Hoàng Gia #7C3AED
+    // Chi tiêu: Xanh Ngọc #06B6D4
+    // Vượt NS: Hồng San Hô #F43F5E
+    // Tiết kiệm: Xanh Bạc Hà #14B8A6
+    // ==========================================================================
+    const apexDarkBase = {
+      chart: {
+        background: 'transparent',
+        foreColor: '#94A3B8',
+        fontFamily: "'Roboto', 'Outfit', sans-serif",
+        toolbar: { show: false }
+      },
+      theme: { mode: 'dark' },
+      grid: {
+        borderColor: 'rgba(255, 255, 255, 0.06)',
+        strokeDashArray: 3
+      }
+    };
+
+    function updateGroupedColumnChart(filtered) {
+      let categories = [];
+      let budgetSeries = [];
+      let spendSeries = [];
+
+      if (selectedQuarter === 'ALL') {
+        // Show by Quarters: Q1, Q2, Q3, Q4
+        document.getElementById('column-chart-title').textContent = 'So Sánh Ngân Sách vs Chi Tiêu Theo Từng Quý';
+        document.getElementById('column-chart-desc').innerHTML = 'Tổng hợp 4 quý năm 2026 &bull; <b style="color: #7C3AED;">■ Ngân sách (#7C3AED)</b> vs <b style="color: #06B6D4;">■ Chi tiêu (#06B6D4)</b> (Đơn vị: Tỷ VNĐ)';
+        const quarters = ['Q1-2026', 'Q2-2026', 'Q3-2026', 'Q4-2026'];
+        categories = ['Quý 1', 'Quý 2', 'Quý 3', 'Quý 4'];
+
+        quarters.forEach(q => {
+          let bSum = 0, sSum = 0;
+          filtered.filter(r => r.Quy === q).forEach(r => {
+            bSum += Number(r.Ngan_Sach_Duyet) || 0;
+            sSum += Number(r.Chi_Tieu_Thuc_Te) || 0;
+          });
+          budgetSeries.push(Number((bSum / 1e9).toFixed(2)));
+          spendSeries.push(Number((sSum / 1e9).toFixed(2)));
+        });
+      } else {
+        // Show by Department for the selected quarter
+        document.getElementById('column-chart-title').textContent = `Chi Tiết Ngân Sách vs Chi Tiêu Trong ${selectedQuarter}`;
+        document.getElementById('column-chart-desc').innerHTML = 'So sánh theo phòng ban &bull; <b style="color: #7C3AED;">■ Ngân sách (#7C3AED)</b> vs <b style="color: #06B6D4;">■ Chi tiêu (#06B6D4)</b> (Đơn vị: Tỷ VNĐ)';
+        const depts = Array.from(new Set(filtered.map(r => r.Phong_Ban))).sort();
+        categories = depts;
+
+        depts.forEach(d => {
+          let bSum = 0, sSum = 0;
+          filtered.filter(r => r.Phong_Ban === d).forEach(r => {
+            bSum += Number(r.Ngan_Sach_Duyet) || 0;
+            sSum += Number(r.Chi_Tieu_Thuc_Te) || 0;
+          });
+          budgetSeries.push(Number((bSum / 1e9).toFixed(2)));
+          spendSeries.push(Number((sSum / 1e9).toFixed(2)));
+        });
+      }
+
+      const options = {
+        ...apexDarkBase,
+        chart: {
+          ...apexDarkBase.chart,
+          type: 'bar',
+          height: 350,
+          animations: {
+            enabled: true,
+            easing: 'easeinout',
+            speed: 600
+          }
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '50%',
+            borderRadius: 6,
+            borderRadiusApplication: 'end'
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ['transparent']
+        },
+        /* STRICT BRAND COMPLIANCE:
+           Series 1 (Ngân Sách Được Duyệt) -> Tím Hoàng Gia #7C3AED
+           Series 2 (Chi Tiêu Thực Tế)     -> Xanh Ngọc #06B6D4
+        */
+        colors: ['#7C3AED', '#06B6D4'],
+        series: [
+          { name: 'Ngân Sách Được Duyệt', data: budgetSeries },
+          { name: 'Chi Tiêu Thực Tế', data: spendSeries }
+        ],
+        xaxis: {
+          categories: categories,
+          labels: {
+            style: { colors: '#94A3B8', fontSize: '12px', fontWeight: 600 }
+          },
+          axisBorder: { show: false },
+          axisTicks: { show: false }
+        },
+        yaxis: {
+          title: { text: 'Tỷ VNĐ', style: { color: '#64748B', fontSize: '11px' } },
+          labels: {
+            formatter: (val) => `${val.toFixed(1)} Tỷ`,
+            style: { colors: '#94A3B8' }
+          }
+        },
+        legend: {
+          position: 'top',
+          horizontalAlign: 'right',
+          labels: { colors: '#CBD5E1' }
+        },
+        tooltip: {
+          theme: 'dark',
+          y: {
+            formatter: (val) => `${val.toFixed(2)} Tỷ VNĐ`
+          }
+        }
+      };
+
+      if (!groupedColumnChart) {
+        groupedColumnChart = new ApexCharts(document.querySelector("#chart-grouped-column"), options);
+        groupedColumnChart.render();
+      } else {
+        groupedColumnChart.updateOptions(options, true, true);
+      }
+    }
+
+    function updateDonutDepartmentChart(filtered) {
+      const deptMap = {};
+      filtered.forEach(r => {
+        const d = r.Phong_Ban || 'Khác';
+        deptMap[d] = (deptMap[d] || 0) + (Number(r.Chi_Tieu_Thuc_Te) || 0);
+      });
+
+      const labels = Object.keys(deptMap).sort();
+      const series = labels.map(l => Number((deptMap[l] / 1e9).toFixed(2)));
+
+      /* Brand Guideline Palette for Donut (Harmonious tones derived from #7C3AED, #06B6D4, #14B8A6, #F43F5E) */
+      const brandDonutColors = [
+        '#7C3AED', // Tím Hoàng Gia
+        '#06B6D4', // Xanh Ngọc
+        '#14B8A6', // Xanh Bạc Hà
+        '#A78BFA', // Tím Sáng
+        '#22D3EE', // Xanh Ngọc Sáng
+        '#F43F5E'  // Hồng San Hô
+      ];
+
+      const options = {
+        ...apexDarkBase,
+        chart: {
+          ...apexDarkBase.chart,
+          type: 'donut',
+          height: 350
+        },
+        labels: labels,
+        series: series,
+        colors: brandDonutColors,
+        stroke: {
+          show: true,
+          colors: ['#1E1E2E'],
+          width: 3
+        },
+        plotOptions: {
+          pie: {
+            donut: {
+              size: '72%',
+              labels: {
+                show: true,
+                total: {
+                  show: true,
+                  label: 'Tổng Chi',
+                  color: '#94A3B8',
+                  fontSize: '13px',
+                  formatter: (w) => {
+                    const sum = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                    return `${sum.toFixed(1)} Tỷ`;
+                  }
+                },
+                value: {
+                  color: '#FFFFFF',
+                  fontSize: '22px',
+                  fontWeight: 700,
+                  formatter: (val) => `${Number(val).toFixed(2)} Tỷ`
+                }
+              }
+            }
+          }
+        },
+        dataLabels: { enabled: false },
+        legend: {
+          position: 'bottom',
+          horizontalAlign: 'center',
+          labels: { colors: '#CBD5E1' }
+        },
+        tooltip: {
+          theme: 'dark',
+          y: {
+            formatter: (val) => `${Number(val).toFixed(2)} Tỷ VNĐ`
+          }
+        }
+      };
+
+      if (!donutDepartmentChart) {
+        donutDepartmentChart = new ApexCharts(document.querySelector("#chart-donut-department"), options);
+        donutDepartmentChart.render();
+      } else {
+        donutDepartmentChart.updateOptions(options, true, true);
+      }
+    }
+
+    function updateSparklines(filtered) {
+      const quarters = ['Q1-2026', 'Q2-2026', 'Q3-2026', 'Q4-2026'];
+      const qBudget = [];
+      const qSpend = [];
+      const qOver = [];
+
+      quarters.forEach(q => {
+        let b = 0, s = 0, o = 0;
+        filtered.filter(r => r.Quy === q).forEach(r => {
+          b += Number(r.Ngan_Sach_Duyet) || 0;
+          s += Number(r.Chi_Tieu_Thuc_Te) || 0;
+          if (r.Trang_Thai === 'Vuot Ngan Sach') o++;
+        });
+        qBudget.push(Number((b / 1e9).toFixed(2)));
+        qSpend.push(Number((s / 1e9).toFixed(2)));
+        qOver.push(o);
+      });
+
+      const sparkBase = {
+        chart: { type: 'area', sparkline: { enabled: true }, animations: { enabled: false } },
+        stroke: { curve: 'smooth', width: 2 },
+        tooltip: { enabled: false }
+      };
+
+      // Sparkline 1: Ngân Sách -> Tím Hoàng Gia #7C3AED
+      const optB = {
+        ...sparkBase,
+        series: [{ data: qBudget.some(v => v > 0) ? qBudget : [1, 1, 1, 1] }],
+        colors: ['#7C3AED'],
+        fill: { opacity: 0.25 }
+      };
+      if (!sparklineBudgetChart) {
+        sparklineBudgetChart = new ApexCharts(document.querySelector("#sparkline-budget"), optB);
+        sparklineBudgetChart.render();
+      } else {
+        sparklineBudgetChart.updateOptions(optB);
+      }
+
+      // Sparkline 2: Chi Tiêu -> Xanh Ngọc #06B6D4
+      const optS = {
+        ...sparkBase,
+        series: [{ data: qSpend.some(v => v > 0) ? qSpend : [1, 1, 1, 1] }],
+        colors: ['#06B6D4'],
+        fill: { opacity: 0.25 }
+      };
+      if (!sparklineSpendChart) {
+        sparklineSpendChart = new ApexCharts(document.querySelector("#sparkline-spend"), optS);
+        sparklineSpendChart.render();
+      } else {
+        sparklineSpendChart.updateOptions(optS);
+      }
+
+      // Sparkline 3: Vượt Ngân Sách -> Hồng San Hô #F43F5E
+      const optO = {
+        ...sparkBase,
+        series: [{ data: qOver }],
+        colors: ['#F43F5E'],
+        fill: { opacity: 0.25 }
+      };
+      if (!sparklineOverChart) {
+        sparklineOverChart = new ApexCharts(document.querySelector("#sparkline-over"), optO);
+        sparklineOverChart.render();
+      } else {
+        sparklineOverChart.updateOptions(optO);
+      }
+    }
+
+    // ==========================================================================
+    // TABLE RENDERING (BRAND STATUS TAGS)
+    // Tiet Kiem: Xanh Bạc Hà #14B8A6
+    // Vuot Ngan Sach: Hồng San Hô #F43F5E
+    // ==========================================================================
+    function renderTableRows(records) {
+      const tbody = document.getElementById('transaction-tbody');
+      if (!records || records.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Không có giao dịch nào khớp với bộ lọc hiện tại.</td></tr>`;
+        return;
+      }
+
+      const displayRows = records.slice(0, 100);
+      let html = '';
+      displayRows.forEach(r => {
+        const isOver = r.Trang_Thai === 'Vuot Ngan Sach';
+        const tagClass = isOver ? 'tag-vuotns' : 'tag-tietkiem';
+        const tagIcon = isOver ? '⚠️' : '✓';
+        const diffColor = isOver ? '#FDA4AF' : '#5EEAD4';
+
+        html += `
+          <tr>
+            <td style="font-weight: 600; color: #CBD5E1;">${r.Ma_Giao_Dich}</td>
+            <td><span style="color: var(--brand-cyan-teal); font-weight: 600;">${r.Quy}</span></td>
+            <td>${r.Phong_Ban}</td>
+            <td>${r.Hang_Muc_Chi}</td>
+            <td style="text-align: right; color: #C4B5FD; font-weight: 500;">${Number(r.Ngan_Sach_Duyet).toLocaleString('vi-VN')}</td>
+            <td style="text-align: right; color: #67E8F9; font-weight: 600;">${Number(r.Chi_Tieu_Thuc_Te).toLocaleString('vi-VN')}</td>
+            <td style="text-align: right; color: ${diffColor}; font-weight: 600;">${Number(r.Chenh_Lech).toLocaleString('vi-VN')}</td>
+            <td style="text-align: center;">
+              <span class="tag-status ${tagClass}">
+                <span>${tagIcon}</span>
+                <span>${r.Trang_Thai}</span>
+              </span>
+            </td>
+          </tr>
+        `;
+      });
+
+      if (records.length > 100) {
+        html += `
+          <tr>
+            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 12px; font-style: italic;">
+              ... và ${records.length - 100} giao dịch khác được tải ngầm. Dùng thanh tìm kiếm để tra cứu chi tiết.
+            </td>
+          </tr>
+        `;
+      }
+
+      tbody.innerHTML = html;
+    }
+
+    // ==========================================================================
+    // USER INTERACTION HANDLERS
+    // ==========================================================================
+    function handleQuarterClick(quarter, btn) {
+      selectedQuarter = quarter;
+      document.querySelectorAll('#quarter-buttons .filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFiltersAndUpdateUI();
+    }
+
+    function handleDepartmentClick(dept, btn) {
+      selectedDepartment = dept;
+      document.querySelectorAll('#department-buttons .filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFiltersAndUpdateUI();
+    }
+
+    function handleTableSearch(val) {
+      searchQuery = val.trim();
+      applyFiltersAndUpdateUI();
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.warn('Fullscreen request failed:', err);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-box');
+      document.getElementById('toast-text').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+    }
+
+    // ==========================================================================
+    // 2-SECOND POLLING & DATA FETCHING ENGINE
+    // ==========================================================================
+    async function fetchRawData(forceNotify = false) {
+      try {
+        const resp = await fetch('/api/data?t=' + Date.now());
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+
+        if (!data.success) {
+          console.error('Server returned error:', data.error);
+          return;
+        }
+
+        const isInitial = rawRecords.length === 0;
+        const fileChanged = (currentMtime !== 0 && data.mtime !== currentMtime);
+
+        rawRecords = data.records || [];
+        currentMtime = data.mtime || 0;
+
+        document.getElementById('last-sync-time').textContent = data.timestamp || 'Vừa xong';
+
+        if (isInitial && data.departments && data.departments.length > 0) {
+          populateDepartmentButtons(data.departments);
+        }
+
+        if (isInitial || fileChanged || forceNotify) {
+          applyFiltersAndUpdateUI();
+          if (fileChanged) {
+            showToast('⚡ File Excel gốc vừa thay đổi! Số liệu Dashboard đã tự động refresh.');
+          }
+        }
+      } catch (err) {
+        console.error('Lỗi khi fetch /api/data:', err);
+        document.getElementById('last-sync-time').textContent = 'Mất kết nối máy chủ';
+      }
+    }
+
+    function populateDepartmentButtons(departments) {
+      const container = document.getElementById('department-buttons');
+      let html = `<button class="filter-btn active" data-dept="ALL" onclick="handleDepartmentClick('ALL', this)">Tất cả Phòng Ban</button>`;
+      departments.forEach(dept => {
+        html += `<button class="filter-btn" data-dept="${dept}" onclick="handleDepartmentClick('${dept}', this)">${dept}</button>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function triggerManualReload() {
+      fetchRawData(true);
+      showToast('Đã làm mới dữ liệu từ file Excel!');
+    }
+
+    // Start 2-second polling countdown & fetch loop
+    let countdownSec = 2;
+    setInterval(() => {
+      countdownSec--;
+      if (countdownSec <= 0) {
+        countdownSec = 2;
+        fetchRawData();
+      }
+      document.getElementById('sync-timer').textContent = `${countdownSec}s`;
+    }, 1000);
+
+    // Initial Load on DOM Ready
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchRawData();
+    });
+  </script>
+</body>
+</html>
