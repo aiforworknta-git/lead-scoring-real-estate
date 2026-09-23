@@ -466,13 +466,81 @@ def generate_zalo_card(row: pd.Series) -> str:
 
 
 # ==========================================
-# KHỞI TẠO STATE & NẠP DỮ LIỆU
+# KHỞI TẠO STATE & NẠP DỮ LIỆU AN TOÀN
 # ==========================================
 
-SAMPLE_DATA_PATH = "my-workspace/sample_leads_clean.csv"
+def get_sample_data_path() -> str:
+    """Tìm kiếm file dữ liệu mẫu ở các đường dẫn khả dĩ."""
+    candidates = [
+        "sample_leads_clean.csv",
+        "my-workspace/sample_leads_clean.csv",
+        "my-workspace/sample_leads.csv",
+        "sample_leads.csv",
+        os.path.join(os.path.dirname(__file__), "sample_leads_clean.csv"),
+        os.path.join(os.path.dirname(__file__), "my-workspace", "sample_leads_clean.csv"),
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return "my-workspace/sample_leads_clean.csv"
 
-def load_initial_data(filepath: str) -> pd.DataFrame:
+def find_asset(filename: str):
+    """Tìm kiếm file tài nguyên ảnh ở các thư mục khả dĩ."""
+    candidates = [
+        os.path.join("assets", filename),
+        os.path.join("my-workspace", "assets", filename),
+        os.path.join(os.path.dirname(__file__), "assets", filename),
+        os.path.join(os.path.dirname(__file__), "my-workspace", "assets", filename),
+        filename
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return None
+
+def ensure_leads_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    """Đảm bảo mọi cột dữ liệu cần thiết luôn tồn tại 100%, chống lỗi KeyError trên Streamlit Cloud."""
+    if df is None or not isinstance(df, pd.DataFrame) or df.empty:
+        return df
+
+    if "phan_khuc" not in df.columns:
+        if "nhu_cau_mo_ta" in df.columns:
+            df["phan_khuc"] = df["nhu_cau_mo_ta"].apply(lambda d: run_ai_scoring_engine(str(d))["segment"])
+        else:
+            df["phan_khuc"] = "Bất Động Sản"
+
+    if "diem_so" not in df.columns:
+        df["diem_so"] = 50
+    if "phan_hang" not in df.columns:
+        df["phan_hang"] = "WARM"
+    if "trang_thai_duyet" not in df.columns:
+        df["trang_thai_duyet"] = "⏳ Chờ duyệt"
+    if "sales_phu_trach" not in df.columns:
+        df["sales_phu_trach"] = "Chưa phân bổ"
+    if "ghi_chu_sales" not in df.columns:
+        df["ghi_chu_sales"] = ""
+    if "sla_phut" not in df.columns:
+        df["sla_phut"] = 24
+    if "ly_do_chi_tiet" not in df.columns:
+        df["ly_do_chi_tiet"] = "Nhu cầu cơ bản"
+    if "tu_khoa_nhan_dien" not in df.columns:
+        df["tu_khoa_nhan_dien"] = ""
+    if "hanh_dong_sales" not in df.columns:
+        df["hanh_dong_sales"] = "Chuyên viên tư vấn liên hệ"
+    if "id" not in df.columns:
+        df["id"] = range(1, len(df) + 1)
+    if "ten_khach" not in df.columns:
+        df["ten_khach"] = [f"Khách hàng #{i}" for i in range(1, len(df) + 1)]
+    if "sdt" not in df.columns:
+        df["sdt"] = ""
+
+    return df
+
+def load_initial_data(filepath: str = None) -> pd.DataFrame:
     """Nạp dữ liệu mẫu và tính điểm AI."""
+    if not filepath:
+        filepath = get_sample_data_path()
+
     if os.path.exists(filepath):
         df = pd.read_csv(filepath, encoding="utf-8-sig")
     else:
@@ -503,10 +571,14 @@ def load_initial_data(filepath: str) -> pd.DataFrame:
             "ghi_chu_sales": ""
         })
 
-    return pd.DataFrame(scored_rows)
+    return ensure_leads_dataframe(pd.DataFrame(scored_rows))
 
-if "df_leads" not in st.session_state:
-    st.session_state.df_leads = load_initial_data(SAMPLE_DATA_PATH)
+# Tự động phát hiện và reset session_state nếu dữ liệu cũ thiếu cột phan_khuc
+if "df_leads" not in st.session_state or "phan_khuc" not in st.session_state.df_leads.columns:
+    st.session_state.df_leads = load_initial_data()
+else:
+    st.session_state.df_leads = ensure_leads_dataframe(st.session_state.df_leads)
+
 
 
 # ==========================================
@@ -514,8 +586,8 @@ if "df_leads" not in st.session_state:
 # ==========================================
 
 with st.sidebar:
-    logo_path = "my-workspace/assets/logo_luxury_real_estate.jpg"
-    if os.path.exists(logo_path):
+    logo_path = find_asset("logo_luxury_real_estate.jpg")
+    if logo_path and os.path.exists(logo_path):
         st.image(logo_path, use_container_width=True)
     else:
         st.markdown("<h2 style='color:#D4AF37;text-align:center;'>AURUM GROUP</h2>", unsafe_allow_html=True)
@@ -611,7 +683,7 @@ with st.sidebar:
 
     st.markdown("---")
     if st.button("🔄 Đặt lại dữ liệu gốc", use_container_width=True):
-        st.session_state.df_leads = load_initial_data(SAMPLE_DATA_PATH)
+        st.session_state.df_leads = load_initial_data(get_sample_data_path())
         st.rerun()
 
 
@@ -620,9 +692,10 @@ with st.sidebar:
 # ==========================================
 
 # 1. Hero Brand Banner Section
-banner_path = "my-workspace/assets/banner_luxury_real_estate.jpg"
-if os.path.exists(banner_path):
+banner_path = find_asset("banner_luxury_real_estate.jpg")
+if banner_path and os.path.exists(banner_path):
     st.image(banner_path, use_container_width=True)
+
 
 st.markdown("""
 <div class="hero-container">
@@ -742,17 +815,25 @@ with tab_dash:
     with dcol2:
         st.markdown("##### 🏢 Phân Bổ Chi Tiết Theo Nhóm Sản Phẩm & Nhu Cầu")
         
-        segment_counts = df["phan_khuc"].value_counts().reset_index()
-        segment_counts.columns = ["Phân Khúc", "Số Lượng"]
+        # Đảm bảo df luôn có cột phan_khuc
+        df = ensure_leads_dataframe(df)
 
-        bar_chart = alt.Chart(segment_counts).mark_bar(cornerRadiusTopRight=6, cornerRadiusBottomRight=6).encode(
-            x=alt.X("Số Lượng:Q", title="Số Lượng Leads", axis=alt.Axis(labelColor="#94a3b8", titleColor="#94a3b8")),
-            y=alt.Y("Phân Khúc:N", sort="-x", title="", axis=alt.Axis(labelColor="#f1f5f9", labelFontSize=12)),
-            color=alt.Color("Số Lượng:Q", scale=alt.Scale(scheme="goldorange"), legend=None),
-            tooltip=["Phân Khúc", "Số Lượng"]
-        ).properties(height=320)
+        if not df.empty and "phan_khuc" in df.columns:
+            # Tương thích cả pandas 1.x, 2.x, 3.x
+            segment_counts = df["phan_khuc"].value_counts().reset_index()
+            segment_counts.columns = ["Phân Khúc", "Số Lượng"]
 
-        st.altair_chart(bar_chart, use_container_width=True)
+            bar_chart = alt.Chart(segment_counts).mark_bar(cornerRadiusTopRight=6, cornerRadiusBottomRight=6).encode(
+                x=alt.X("Số Lượng:Q", title="Số Lượng Leads", axis=alt.Axis(labelColor="#94a3b8", titleColor="#94a3b8")),
+                y=alt.Y("Phân Khúc:N", sort="-x", title="", axis=alt.Axis(labelColor="#f1f5f9", labelFontSize=12)),
+                color=alt.Color("Số Lượng:Q", scale=alt.Scale(scheme="goldorange"), legend=None),
+                tooltip=["Phân Khúc", "Số Lượng"]
+            ).properties(height=320)
+
+            st.altair_chart(bar_chart, use_container_width=True)
+        else:
+            st.info("Chưa có dữ liệu phân khúc để hiển thị biểu đồ.")
+
 
     st.markdown("---")
 
